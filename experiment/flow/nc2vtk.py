@@ -27,7 +27,7 @@ def nc2vtk(input_path, output_path):
     # 创建网格信息
     xdim, ydim, zdim = len(lon), len(lat), len(depth)
 
-    x = np.arange(0, xdim, 1, dtype='float64')  # np.arange(起点，终点，步长）
+    x = np.arange(0, xdim, 1, dtype='float64')  # np.arrange(起点，终点，步长）
     y = np.arange(0, ydim, 1, dtype='float64')
     z = np.arange(0, zdim, 1, dtype='float64')
 
@@ -61,4 +61,4 @@ def nc2vtk(input_path, output_path):
 
 
 if __name__ == '__main__':
-    nc2vtk('/Users/yy/Desktop/IWP_DAILY_20141123.nc', 'output.vtk')
+    nc2vtk('/Users/yy/Desktop/IWP_DAILY_20141123.nc', 'temp/output.vtk')
