@@ -1,5 +1,4 @@
 import xarray as xr
-import pyvista as pv
 import numpy as np
 from vtkmodules.util.numpy_support import numpy_to_vtk
 from vtkmodules.util.vtkConstants import VTK_FLOAT
@@ -61,4 +60,4 @@ def nc2vtk(input_path, output_path):
 
 
 if __name__ == '__main__':
-    nc2vtk('/Users/yy/Desktop/IWP_DAILY_20141123.nc', 'temp/output.vtk')
+    nc2vtk('/Users/yy/Desktop/IWP_DAILY_20141123.nc', 'temp/grid.vtk')
