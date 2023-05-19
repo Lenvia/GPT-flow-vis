@@ -3,7 +3,6 @@ import random
 from vtkmodules.vtkCommonDataModel import vtkPolyData
 from vtkmodules.vtkCommonCore import vtkPoints
 from vtkmodules.vtkFiltersFlowPaths import vtkStreamTracer
-
 from vtkmodules.vtkIOLegacy import *
 
 
@@ -13,7 +12,7 @@ def generate_streamline(filename, output, xrange=None, yrange=None, zrange=None,
     reader.Update()
 
     # 获取速度向量
-    vectors = reader.GetOutput().GetPointData().GetVectors()
+    # vectors = reader.GetOutput().GetPointData().GetVectors()
 
     # 设置撒点区域
     xmin, xmax = xrange
