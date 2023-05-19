@@ -133,3 +133,8 @@ yarn-error.log*
 next-env.d.ts
 
 tmp
+
+
+# specific
+experiment/flow/temp/
+mysite/db.sqlite3
