@@ -8,9 +8,6 @@
 import http from '@/utils/request';
 import {onMounted} from "vue";
 
-
-
-
 export default {
   name: "test",
 
