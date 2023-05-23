@@ -10,26 +10,21 @@
                     type="textarea"
                     @keydown.enter.prevent="handleEnter"
           />
-          <!--          <el-upload-->
-          <!--              class="upload-demo"-->
-          <!--              :action="''"-->
-          <!--              :limit="1"-->
-          <!--              :auto-upload="false"-->
-          <!--              :show-file-list="false"-->
-          <!--              :on-change="handleChange"-->
-          <!--          >-->
-          <!--            <el-button type="primary">select file-->
-          <!--              <el-icon class="el-icon&#45;&#45;right"><Upload /></el-icon></el-button>-->
-          <!--          </el-upload>-->
+          <el-upload
+              class="upload-demo"
+              :action="''"
+              :limit="1"
+              :auto-upload="false"
+              :show-file-list="false"
+              :on-change="handleChange"
+          >
+            <el-button type="primary">select file
+              <el-icon class="el-icon--right">
+                <Upload/>
+              </el-icon>
+            </el-button>
+          </el-upload>
 
-<!--          <el-select v-model="selectedFile" class="m-2" placeholder="Select" size="large">-->
-<!--            <el-option-->
-<!--                v-for="fileName in fileNames"-->
-<!--                :key="fileName"-->
-<!--                :label="fileName"-->
-<!--                :value="fileName"-->
-<!--            />-->
-<!--          </el-select>-->
 
           <el-button type="primary" round @click="submit">Submit</el-button>
         </div>
@@ -52,40 +47,37 @@
 <script lang="ts">
 import {ElInput, ElCol, ElRow, ElButton, ElUpload, ElIcon} from 'element-plus'
 import {Upload} from '@element-plus/icons-vue'
-// import fs from 'fs';
+
 import {ref, onMounted} from 'vue'
+import {dialog} from 'electron';
+import path from 'path';
 
 const areaInput = ref('')
+// const filePath = ref('');
+const fileName = ref('');
 
 export default {
   name: "ChatView",
   components: {ElInput, ElCol, ElRow, ElButton, ElUpload, Upload, ElIcon},
 
   setup() {
-    const fileNames = ref<string[]>([]);
+    const handleChange = (file: File) => {
+      console.log(file)
+      fileName.value = file.name;
+      console.log(fileName.value)
+    };
 
-    const selectedFile = ref('');
-
-    // const loadFileNames = () => {
-    //   const folderPath = 'Users/yy/GithubProjects/GPT-flow-vis/experiment/data/nc_flow_field'; // 替换成实际的文件夹路径
-    //
-    //   fs.readdir(folderPath, (err, files) => {
-    //     if (err) {
-    //       console.error(err);
-    //       return;
+    // const selectFile = () => {
+    //   dialog.showOpenDialog({properties: ['openFile']}).then((result) => {
+    //     if (!result.canceled && result.filePaths.length > 0) {
+    //       const file = result.filePaths[0];
+    //       const absolutePath = path.resolve(file);
+    //       filePath.value = absolutePath;
+    //       console.log(filePath.value)
     //     }
-    //     fileNames.value = files;
+    //   }).catch((err) => {
+    //     console.error(err);
     //   });
-    // };
-    //
-    // onMounted(() => {
-    //   loadFileNames();
-    // });
-
-    // const handleChange = (file: File) => {
-    //   console.log(file)
-    //   fileName.value = file.name;
-    //   console.log(fileName.value)
     // };
 
     function submit() {
@@ -108,8 +100,8 @@ export default {
       areaInput,
       submit,
       handleEnter,
-      fileNames,
-      selectedFile,
+      fileName,
+      handleChange
     }
   }
 }

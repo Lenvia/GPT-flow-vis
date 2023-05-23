@@ -1,4 +1,6 @@
 const { defineConfig } = require('@vue/cli-service')
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
+
 module.exports = defineConfig({
   transpileDependencies: true,
 
@@ -12,6 +14,8 @@ module.exports = defineConfig({
     electronBuilder: {
       // Use this to set the development server URL
       // in development mode
+      nodeIntegration:true,
+
       builderOptions: {
         // Set the development server URL
         // in development mode
@@ -21,5 +25,11 @@ module.exports = defineConfig({
       },
     },
   },
+
+  configureWebpack: {
+    plugins: [
+      new NodePolyfillPlugin()
+    ]
+  }
 
 })

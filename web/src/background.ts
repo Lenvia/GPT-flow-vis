@@ -5,6 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
+
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
@@ -14,9 +15,8 @@ async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
     width: 1200,
-    height: 600,
+    height: 1000,
     webPreferences: {
-      
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
@@ -25,6 +25,7 @@ async function createWindow() {
     }
   })
 
+  // warning! WEBPACK_DEV_SERVER_URL 不知道咋设置
   await win.loadURL('http://localhost:9901/main')
 
   // if (process.env.WEBPACK_DEV_SERVER_URL) {
