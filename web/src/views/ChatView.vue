@@ -48,21 +48,28 @@
 import {ElInput, ElCol, ElRow, ElButton, ElUpload, ElIcon} from 'element-plus'
 import {Upload} from '@element-plus/icons-vue'
 
-import {ref, onMounted} from 'vue'
+import {ref, onMounted, getCurrentInstance} from 'vue'
 import {dialog} from 'electron';
 import path from 'path';
+import {useWebSocket} from "@/plugin/websocket";
 
 const areaInput = ref('')
-// const filePath = ref('');
 const fileName = ref('');
 
 export default {
   name: "ChatView",
   components: {ElInput, ElCol, ElRow, ElButton, ElUpload, Upload, ElIcon},
 
+  created() {
+    const instance = getCurrentInstance();
+    console.log(instance)
+  },
+
   setup() {
+
+    const { ws } = useWebSocket()
+
     const handleChange = (file: File) => {
-      console.log(file)
       fileName.value = file.name;
       console.log(fileName.value)
     };
@@ -82,6 +89,7 @@ export default {
 
     function submit() {
       console.log(areaInput.value)
+      ws.value?.send(areaInput.value);
     }
 
     const handleEnter = (event: KeyboardEvent) => {

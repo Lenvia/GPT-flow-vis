@@ -22,8 +22,9 @@
 <script lang="ts">
 import {ElCol, ElRow, ElDivider, ElCard} from 'element-plus'
 import ChatView from "@/views/ChatView.vue";
-
-export default {
+import {defineComponent, onMounted, onUnmounted} from 'vue';
+import {useWebSocket} from "@/plugin/websocket";
+export default defineComponent({
   name: "MainView",
   props: {
     span: {
@@ -31,8 +32,14 @@ export default {
       default: 24
     }
   },
-  components: {ChatView, ElCol, ElRow, ElDivider, ElCard}
-}
+  components: {ChatView, ElCol, ElRow, ElDivider, ElCard},
+
+  // setup(){
+  //
+  // }
+
+
+})
 </script>
 
 <style>
