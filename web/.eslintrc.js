@@ -21,7 +21,6 @@ module.exports = {
     'no-unexpected-multiline': 'error', // 禁止空余的多行
     'no-useless-escape': 'off', // 禁止不必要的转义字符
 
-
     // typeScript (https://typescript-eslint.io/rules)
     // '@typescript-eslint/no-unused-vars': 'error', // 禁止定义未使用的变量
     '@typescript-eslint/prefer-ts-expect-error': 'error', // 禁止使用 @ts-ignore
