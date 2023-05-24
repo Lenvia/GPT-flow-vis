@@ -41,7 +41,7 @@ def generate_streamline(filename, output, center=[], number_of_points=1000, radi
     del grid
 
 
-generate_streamline(filename="/Users/yy/GithubProjects/GPT-flow-vis/experiment/flow/temp/grid.vtk",
+generate_streamline(filename="/mysite/server/experiment/flow/temp/grid.vtk",
                     output='/Users/yy/GithubProjects/GPT-flow-vis/experiment/flow/temp/streamline.vtk',
                     center=[369.96175149530234, 242.28417484032448, 15.894009023304633],
                     number_of_points=1000,

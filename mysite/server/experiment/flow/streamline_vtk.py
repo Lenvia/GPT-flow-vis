@@ -57,7 +57,7 @@ def generate_streamline(filename, output, xrange=None, yrange=None, zrange=None,
     print('done!')
 
 
-generate_streamline(filename="/Users/yy/GithubProjects/GPT-flow-vis/experiment/flow/temp/grid.vtk",
+generate_streamline(filename="/mysite/server/experiment/flow/temp/grid.vtk",
                     output='/Users/yy/GithubProjects/GPT-flow-vis/experiment/flow/temp/streamline2.vtk',
                     xrange=[190, 590],
                     yrange=[40, 440],
