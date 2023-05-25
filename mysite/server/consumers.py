@@ -6,6 +6,7 @@
 import pdb
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
+from .controller import handle_message
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -17,5 +18,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
         pass
 
     async def receive(self, text_data):
-        print(text_data)
-        await self.send(text_data=text_data)
+        res = handle_message(text_data)
+        await self.send(text_data=res)
