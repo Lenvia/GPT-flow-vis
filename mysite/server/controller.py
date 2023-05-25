@@ -12,6 +12,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def handle_message(text_data):
     try:
+        # TODO 调用 gpt 生成对text_data 的命令
+
         data = json.loads(text_data)
         code = data.get('code')
         message = data.get('message')

@@ -12,10 +12,10 @@ from .controller import handle_message
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
-        print("已连接")
+        print("Websocket已连接")
 
     async def disconnect(self, close_code):
-        pass
+        print("Websocket已断开")
 
     async def receive(self, text_data):
         res = handle_message(text_data)

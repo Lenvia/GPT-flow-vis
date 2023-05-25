@@ -13,6 +13,11 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir):
     # 加载.nc文件
     ds = xr.open_dataset(input_path)
 
+    # print(ds.variables)
+    # print(ds.dims)
+    # print(ds.coords)
+    print(ds.info())
+
     # 提取u和v变量
     if len(ds.u.shape) == 4:
         u = ds.u.sel(time=ds.time[0]).values
@@ -63,5 +68,5 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir):
     print("done!")
 
 
-# if __name__ == '__main__':
-#     nc2vtk('IWP_DAILY_20141123.nc')
+if __name__ == '__main__':
+    nc2vtk('IWP_DAILY_20141123.nc', "../data/nc_flow_field", "../data/vtk_flow_field")

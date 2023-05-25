@@ -7,6 +7,7 @@ from django.http import HttpResponse, JsonResponse
 import json
 from .experiment.flow.nc2vtk import nc2vtk
 from django.views.decorators.csrf import csrf_exempt
+from .experiment.flow import glo_var
 
 nc_base_dir = 'server/experiment/data/nc_flow_field'
 vtk_base_dir = 'server/experiment/data/vtk_flow_field'
@@ -20,7 +21,6 @@ def test(request):
     print(request)
     data = {'data': "OK"}
     response = JsonResponse(data)
-    # response['Access-Control-Allow-Origin'] = '*'
 
     return response
 
@@ -34,6 +34,7 @@ def uploadNC(request):
         json_data = json.loads(data)
         # 获取文件名
         file_name = json_data.get('file_name')
+        glo_var.file_name = file_name
         print("nc2vtk: ", file_name)
         try:
             nc2vtk(file_name, nc_base_dir, vtk_base_dir)
@@ -43,4 +44,5 @@ def uploadNC(request):
         data = {'data': "OK"}
         response = JsonResponse(data)
         return response
-    pass
+
+    return JsonResponse({'data': "Error"})
