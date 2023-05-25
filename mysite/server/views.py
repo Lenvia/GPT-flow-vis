@@ -9,9 +9,6 @@ from .experiment.flow.nc2vtk import nc2vtk
 from django.views.decorators.csrf import csrf_exempt
 from .experiment.flow import glo_var
 
-nc_base_dir = 'server/experiment/data/nc_flow_field'
-vtk_base_dir = 'server/experiment/data/vtk_flow_field'
-
 
 def my_view(request):
     return HttpResponse("Hello, World!")
@@ -37,7 +34,7 @@ def uploadNC(request):
         glo_var.file_name = file_name
         print("nc2vtk: ", file_name)
         try:
-            nc2vtk(file_name, nc_base_dir, vtk_base_dir)
+            nc2vtk(file_name, glo_var.nc_base_dir, glo_var.vtk_base_dir)
         except Exception as e:
             print(e)
 

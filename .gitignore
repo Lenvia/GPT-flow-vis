@@ -135,6 +135,7 @@ next-env.d.ts
 tmp
 
 
-# specific
-mysite/server/experiment/flow/temp/
-mysite/db.sqlite3
+# data
+*.sqlite3
+*.nc
+*.vtk

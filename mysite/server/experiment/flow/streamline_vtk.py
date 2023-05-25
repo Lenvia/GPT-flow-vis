@@ -1,14 +1,17 @@
 # from vtkmodules.all import *  # 当你不知道引入哪个包时，就打开本行注释，全部引入
+import os.path
 import random
 from vtkmodules.vtkCommonDataModel import vtkPolyData
 from vtkmodules.vtkCommonCore import vtkPoints
 from vtkmodules.vtkFiltersFlowPaths import vtkStreamTracer
 from vtkmodules.vtkIOLegacy import *
+import datetime
 
 
-def generate_streamline(filename, output, xrange=None, yrange=None, zrange=None, number_of_points=1000):
+def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None, yrange=None, zrange=None,
+                        number_of_points=1000):
     reader = vtkRectilinearGridReader()
-    reader.SetFileName(filename)
+    reader.SetFileName(os.path.join(vtk_base_dir, filename))
     reader.Update()
 
     # 获取速度向量
@@ -47,19 +50,22 @@ def generate_streamline(filename, output, xrange=None, yrange=None, zrange=None,
     # streamer.SetInterpolatorTypeToDataSetPointLocator()
     # streamer.SetInterpolatorTypeToKochanekSpline()
 
-
     # 保存流线为vtk文件
     writer = vtkPolyDataWriter()
-    writer.SetFileName(output)
+
+    # 根据时间戳生成文件名
+    now = datetime.datetime.now()
+    out_put = filename.split('.')[0] + "_{}{}_{}{}.vtk".format(now.month, now.day, now.hour, now.minute)
+
+    writer.SetFileName(os.path.join(streamline_base_dir, out_put))
     writer.SetInputConnection(streamer.GetOutputPort())
     writer.Write()
 
     print('done!')
 
 
-generate_streamline(filename="/mysite/server/experiment/flow/temp/grid.vtk",
-                    output='/Users/yy/GithubProjects/GPT-flow-vis/experiment/flow/temp/streamline2.vtk',
-                    xrange=[190, 590],
-                    yrange=[40, 440],
-                    zrange=[0, 32],
-                    number_of_points=500)
+# generate_streamline(filename="/mysite/server/experiment/flow/temp/grid.vtk",
+#                     xrange=[190, 590],
+#                     yrange=[40, 440],
+#                     zrange=[0, 32],
+#                     number_of_points=500)
