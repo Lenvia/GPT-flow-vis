@@ -9,4 +9,5 @@ from . import views
 urlpatterns = [
     path('hello/', views.my_view, name='my_view'),
     path('test/', views.test, name='test'),
+    path('upload/', views.uploadNC, name='upload'),
 ]

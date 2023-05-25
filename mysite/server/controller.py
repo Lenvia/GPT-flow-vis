@@ -7,10 +7,6 @@ import json
 import os
 import openai
 
-
-# From the IPython.display package, import display and Markdown
-# from IPython.display import display, Markdown
-
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 

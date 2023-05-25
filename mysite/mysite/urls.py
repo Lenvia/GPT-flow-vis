@@ -22,7 +22,7 @@ from .routing import websocket_urlpatterns
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('server/', include('server.urls')),
+    path('', include('server.urls')),
     path('', include(websocket_urlpatterns)),
 
 ]

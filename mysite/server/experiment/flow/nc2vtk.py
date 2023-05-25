@@ -1,3 +1,5 @@
+import os.path
+
 import xarray as xr
 import numpy as np
 from vtkmodules.util.numpy_support import numpy_to_vtk
@@ -6,7 +8,8 @@ from vtkmodules.vtkCommonDataModel import vtkRectilinearGrid
 from vtkmodules.vtkIOLegacy import vtkRectilinearGridWriter
 
 
-def nc2vtk(input_path, output_path):
+def nc2vtk(file_name, nc_base_dir, vtk_base_dir):
+    input_path = os.path.join(nc_base_dir, file_name)
     # 加载.nc文件
     ds = xr.open_dataset(input_path)
 
@@ -52,6 +55,7 @@ def nc2vtk(input_path, output_path):
     # 写入vtk文件
     writer = vtkRectilinearGridWriter()
 
+    output_path = os.path.join(vtk_base_dir, file_name)
     writer.SetFileName(output_path)
     writer.SetInputData(grid)
     writer.Write()
@@ -59,5 +63,5 @@ def nc2vtk(input_path, output_path):
     print("done!")
 
 
-if __name__ == '__main__':
-    nc2vtk('/Users/yy/Desktop/IWP_DAILY_20141123.nc', 'temp/grid.vtk')
+# if __name__ == '__main__':
+#     nc2vtk('IWP_DAILY_20141123.nc')

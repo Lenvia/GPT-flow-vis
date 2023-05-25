@@ -52,6 +52,7 @@ import {ref, onMounted, getCurrentInstance} from 'vue'
 import {dialog} from 'electron';
 import path from 'path';
 import {useWebSocket} from "@/plugin/websocket";
+import http from '@/utils/request';
 
 const areaInput = ref('')
 const fileName = ref('');
@@ -67,11 +68,28 @@ export default {
 
   setup() {
 
-    const { ws } = useWebSocket()
+    const {ws} = useWebSocket()
+    // const csrftoken = getCookie('csrftoken');
+    // console.log(csrftoken)
+    //
+    // // 获取 CSRF token
+    // function getCookie(name: string) {
+    //   const value = `; ${document.cookie}`;
+    //   const parts = value.split(`; ${name}=`);
+    //   if (parts.length === 2) {
+    //     return parts.pop()?.split(';').shift();
+    //   }
+    // }
 
-    const handleChange = (file: File) => {
+    const handleChange = async (file: File) => {
       fileName.value = file.name;
-      console.log(fileName.value)
+      const response = await http.post('/upload/', {
+        "file_name": fileName.value,
+      }, {
+        timeout: 20000
+      })
+
+      console.log(response.data)
     };
 
     // const selectFile = () => {
