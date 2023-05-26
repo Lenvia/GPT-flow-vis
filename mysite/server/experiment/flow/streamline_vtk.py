@@ -105,12 +105,12 @@ def make_snapshot():
             grid[int(np.round(x*scale))][int(np.round(y*scale))] += 1
 
     # 打印二维数组
-    print(grid)
+    # print(grid)
 
     # 使用matplotlib绘制二维数组
     plt.imshow(grid, origin='lower', extent=[0, 780*scale, 0, 480*scale])
     plt.colorbar(label='num')
-    plt.clim(0, 2)
+    plt.clim(0, max(1, int(5/scale)))
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.title('num')
