@@ -23,11 +23,13 @@ def dispatch(text):
     return process_id
 
 
-def handle_message(text_data):
+def handle_message(text):
     try:
-        # TODO 调用 gpt 生成对text_data 的命令
-        process_id = dispatch(text_data)
+        process_id = dispatch(text)
         print("即将跳转：", process_id)
+
+        if process_id == 1:
+            process_1(process_id, text)
 
         # data = json.loads(text_data)
         # code = data.get('code')
@@ -47,12 +49,15 @@ def handle_message(text_data):
         # return res
 
     except json.JSONDecodeError:
-        return "无效的 JSON 格式:" + text_data
+        return "无效的 JSON 格式"
 
 
 # 示例处理函数，你可以根据实际需求进行替换
-def process_status_100(message):
-    return message
+def process_1(process_id, text):
+    system_prompt = prompts[index2key[process_id]]
+    resp = chat(system_prompt, [text])
+
+    print(resp)
 
 
 def process_status_200(message):

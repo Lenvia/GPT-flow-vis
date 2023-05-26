@@ -3,7 +3,7 @@ import os.path
 import xarray as xr
 import numpy as np
 from vtkmodules.util.numpy_support import numpy_to_vtk
-from vtkmodules.util.vtkConstants import VTK_FLOAT
+from vtkmodules.util.vtkConstants import VTK_FLOAT, VTK_INT
 from vtkmodules.vtkCommonDataModel import vtkRectilinearGrid
 from vtkmodules.vtkIOLegacy import vtkRectilinearGridWriter
 
@@ -38,9 +38,9 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir):
     y = np.arange(0, ydim, 1, dtype='float64')
     z = np.arange(0, zdim, 1, dtype='float64')
 
-    x_coo = numpy_to_vtk(num_array=x, deep=True, array_type=VTK_FLOAT)
-    y_coo = numpy_to_vtk(num_array=y, deep=True, array_type=VTK_FLOAT)
-    z_coo = numpy_to_vtk(num_array=z, deep=True, array_type=VTK_FLOAT)
+    x_coo = numpy_to_vtk(num_array=x, deep=True, array_type=VTK_INT)
+    y_coo = numpy_to_vtk(num_array=y, deep=True, array_type=VTK_INT)
+    z_coo = numpy_to_vtk(num_array=z, deep=True, array_type=VTK_INT)
 
     grid = vtkRectilinearGrid()
     grid.SetDimensions(xdim, ydim, zdim)
@@ -60,7 +60,7 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir):
     # 写入vtk文件
     writer = vtkRectilinearGridWriter()
 
-    output_path = os.path.join(vtk_base_dir, file_name)
+    output_path = os.path.join(vtk_base_dir, file_name.split('.')[0]+'.vtk')
     writer.SetFileName(output_path)
     writer.SetInputData(grid)
     writer.Write()

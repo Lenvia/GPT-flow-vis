@@ -1,11 +1,23 @@
 # from vtkmodules.all import *  # 当你不知道引入哪个包时，就打开本行注释，全部引入
 import os.path
 import random
-from vtkmodules.vtkCommonDataModel import vtkPolyData
+
+from vtkmodules.util import colors
+from vtkmodules.util.numpy_support import vtk_to_numpy
+from vtkmodules.vtkCommonDataModel import vtkPolyData, vtkPlane
 from vtkmodules.vtkCommonCore import vtkPoints
+from vtkmodules.vtkFiltersCore import vtkCutter
 from vtkmodules.vtkFiltersFlowPaths import vtkStreamTracer
+from vtkmodules.vtkFiltersGeometry import vtkImageDataGeometryFilter
+from vtkmodules.vtkIOImage import vtkPNGWriter
 from vtkmodules.vtkIOLegacy import *
 import datetime
+import numpy as np
+import matplotlib.pyplot as plt
+
+from vtkmodules.vtkImagingCore import vtkImageReslice
+from vtkmodules.vtkRenderingCore import vtkWindowToImageFilter, vtkDataSetMapper, vtkActor, vtkRenderer, \
+    vtkRenderWindow, vtkRenderWindowInteractor, vtkPolyDataMapper
 
 
 def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None, yrange=None, zrange=None,
@@ -64,8 +76,54 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     print('done!')
 
 
-# generate_streamline(filename="/mysite/server/experiment/flow/temp/grid.vtk",
-#                     xrange=[190, 590],
-#                     yrange=[40, 440],
-#                     zrange=[0, 32],
-#                     number_of_points=500)
+def make_snapshot():
+    # 读取 VTK 文件
+    # 创建一个vtk reader
+    reader = vtkPolyDataReader()
+    reader.SetFileName('../data/streamlines/IWP_DAILY_20141123_526_2121.vtk')
+    reader.Update()
+
+    # 获取点的坐标
+    polydata = reader.GetOutput()
+    points = polydata.GetPoints()
+    coords = vtk_to_numpy(points.GetData())
+
+    scale = 1
+
+    # 创建二维数组
+    x_dim = 780*scale
+    y_dim = 480*scale
+    grid = np.zeros((x_dim, y_dim))
+
+    # 遍历所有点，保存z坐标在0~1范围内的点到二维数组中
+    for coord in coords:
+        x, y, z = coord
+
+        if np.nan in coord:
+            continue
+        if 0 <= z <= 1:
+            grid[int(np.round(x*scale))][int(np.round(y*scale))] += 1
+
+    # 打印二维数组
+    print(grid)
+
+    # 使用matplotlib绘制二维数组
+    plt.imshow(grid, origin='lower', extent=[0, 780*scale, 0, 480*scale])
+    plt.colorbar(label='num')
+    plt.clim(0, 2)
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.title('num')
+    plt.show()
+
+
+if __name__ == "__main__":
+    # generate_streamline(filename="IWP_DAILY_20141123.vtk",
+    #                     vtk_base_dir="../data/vtk_flow_field",
+    #                     streamline_base_dir="../data/streamlines",
+    #                     xrange=[0, 780],
+    #                     yrange=[0, 480],
+    #                     zrange=[0, 1],
+    #                     number_of_points=1000)
+
+    make_snapshot()
