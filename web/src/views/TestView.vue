@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import http from '@/utils/request';
+import http from '@/plugin/request';
 import {onMounted} from "vue";
 
 export default {

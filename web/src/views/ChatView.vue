@@ -52,7 +52,7 @@ import {ref, onMounted, getCurrentInstance} from 'vue'
 import {dialog} from 'electron';
 import path from 'path';
 import {useWebSocket} from "@/plugin/websocket";
-import http from '@/utils/request';
+import http from '@/plugin/request';
 
 const areaInput = ref('')
 const fileName = ref('');
@@ -69,17 +69,6 @@ export default {
   setup() {
 
     const {ws} = useWebSocket()
-    // const csrftoken = getCookie('csrftoken');
-    // console.log(csrftoken)
-    //
-    // // 获取 CSRF token
-    // function getCookie(name: string) {
-    //   const value = `; ${document.cookie}`;
-    //   const parts = value.split(`; ${name}=`);
-    //   if (parts.length === 2) {
-    //     return parts.pop()?.split(';').shift();
-    //   }
-    // }
 
     const handleChange = async (file: File) => {
       fileName.value = file.name;
@@ -91,19 +80,6 @@ export default {
 
       console.log(response.data)
     };
-
-    // const selectFile = () => {
-    //   dialog.showOpenDialog({properties: ['openFile']}).then((result) => {
-    //     if (!result.canceled && result.filePaths.length > 0) {
-    //       const file = result.filePaths[0];
-    //       const absolutePath = path.resolve(file);
-    //       filePath.value = absolutePath;
-    //       console.log(filePath.value)
-    //     }
-    //   }).catch((err) => {
-    //     console.error(err);
-    //   });
-    // };
 
     function submit() {
       console.log(areaInput.value)
