@@ -82,7 +82,7 @@ export default {
     };
 
     function submit() {
-      console.log(areaInput.value)
+      console.log("发送消息： ", areaInput.value)
       ws.value?.send(areaInput.value);
     }
 

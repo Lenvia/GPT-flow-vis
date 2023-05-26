@@ -20,7 +20,7 @@ def chat(system, user_assistant):
     msgs = system_msg + user_assistant_msgs
     response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=msgs)
     status_code = response["choices"][0]["finish_reason"]
-    assert status_code == "stop", f"The status code was {status_code}."
+    # assert status_code == "stop", f"The status code was {status_code}."
     return response["choices"][0]["message"]["content"]
 
 

@@ -3,6 +3,7 @@
 @author: Runpu
 @time: 2023/5/23 21:27
 """
+import json
 import pdb
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -19,4 +20,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         res = handle_message(text_data)
-        await self.send(text_data=res)
+
+        await self.send(text_data=json.dumps(res))
