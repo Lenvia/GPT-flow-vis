@@ -21,4 +21,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         res = handle_message(text_data)
 
-        await self.send(text_data=json.dumps(res))
+        if res is not None:
+            await self.send(text_data=json.dumps(res))

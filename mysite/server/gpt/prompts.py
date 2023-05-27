@@ -63,7 +63,7 @@ prompts = {
         </content>
         
         示例二：
-        输入："在x范围为0到100，y从0到50，随机生成550个种子点"。
+        输入："在x范围为0到100，y从0到50，种子点设置550个"。
         输出：
         <content>
         {"seedItem":{"xmin": 0, "xmax": 100, "ymin": 0, "ymax": 50, "zmin": -1,"zmax": -1, "nseeds": 550}}

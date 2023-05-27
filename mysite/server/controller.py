@@ -29,40 +29,36 @@ def handle_message(text):
         print("即将跳转：", process_id)
 
         if process_id == 1:
-            process_1(process_id, text)
+            pic_path = process_1(process_id, text)
 
-        # data = json.loads(text_data)
-        # code = data.get('code')
-        # message = data.get('message')
-        #
-        # if code is None or message is None:
-        #     return "无效的消息格式:" + text_data
-        #
-        # # 根据状态码分类处理消息
-        # res = None
-        # if code == 100:
-        #     res = process_status_100(message)
-        # elif code == 200:
-        #     res = process_status_200(message)
-        # else:
-        #     res = process_unknown_status(message)
-        # return res
+            # 制作消息
+            data = {
+                "id": 1,
+                "data": pic_path
+            }
 
-    except json.JSONDecodeError:
-        return "无效的 JSON 格式"
+            return data
+    except Exception as e:
+        print(e)
+        return None
 
 
-# 示例处理函数，你可以根据实际需求进行替换
+# seed 播撒种子点生成流线返回图像
 def process_1(process_id, text):
     system_prompt = prompts[index2key[process_id]]
-    resp = chat(system_prompt, [text])
+    resp = chat(system_prompt, [text])  # 配置文件回答
 
-    print(resp)
+    pattern = r'<content>(.*?)</content>'  # 定义正则表达式，匹配包含在<content>标签中的内容
+    matches = re.findall(pattern, resp, re.DOTALL)  # 考虑存在换行符
+    matches = [match.replace('\n', '') for match in matches]
 
+    pic_path = ""
+    if len(matches) > 0:
+        match = matches[0]
+        json_config = json.loads(match)  # 解析为JSON格式
+        print(json_config)
+        # TODO 根据 json_config 调用 播撒函数，得到图片的路径
 
-def process_status_200(message):
-    return message
+        return pic_path
 
-
-def process_unknown_status(message):
-    return message
+    return pic_path
