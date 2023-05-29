@@ -8,6 +8,12 @@ from vtkmodules.vtkCommonDataModel import vtkRectilinearGrid
 from vtkmodules.vtkIOLegacy import vtkRectilinearGridWriter
 
 
+def quicklook(input_path):
+    # 加载.nc文件
+    ds = xr.open_dataset(input_path)
+    print(ds.info())
+
+
 def nc2vtk(file_name, nc_base_dir, vtk_base_dir):
     input_path = os.path.join(nc_base_dir, file_name)
     # 加载.nc文件
@@ -60,7 +66,7 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir):
     # 写入vtk文件
     writer = vtkRectilinearGridWriter()
 
-    output_path = os.path.join(vtk_base_dir, file_name.split('.')[0]+'.vtk')
+    output_path = os.path.join(vtk_base_dir, file_name.split('.')[0] + '.vtk')
     writer.SetFileName(output_path)
     writer.SetInputData(grid)
     writer.Write()
@@ -69,4 +75,5 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir):
 
 
 if __name__ == '__main__':
-    nc2vtk('IWP_DAILY_20141123.nc', "../data/nc_flow_field", "../data/vtk_flow_field")
+    # nc2vtk('IWP_DAILY_20141123.nc', "../data/nc_flow_field", "../data/vtk_flow_field")
+    quicklook('../data/nc_flow_field/IWP_DAILY_20141123.nc')

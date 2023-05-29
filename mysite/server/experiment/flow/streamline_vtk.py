@@ -88,7 +88,7 @@ def make_snapshot():
     points = polydata.GetPoints()
     coords = vtk_to_numpy(points.GetData())
 
-    scale = 1
+    scale = 3
 
     # 创建二维数组
     x_dim = 780*scale
@@ -108,12 +108,23 @@ def make_snapshot():
     # print(grid)
 
     # 使用matplotlib绘制二维数组
-    plt.imshow(grid, origin='lower', extent=[0, 780*scale, 0, 480*scale])
-    plt.colorbar(label='num')
-    plt.clim(0, max(1, int(5/scale)))
-    plt.xlabel('X')
-    plt.ylabel('Y')
-    plt.title('num')
+
+
+    # plt.colorbar(label='num')
+
+    # plt.xlabel('X')
+    # plt.ylabel('Y')
+    # 去除白框
+    plt.imshow(grid)
+    plt.clim(0, max(1, int(5 / scale)))
+    plt.axis('off')
+    # plt.margins(0, 0)
+
+    # 调整图像的边距
+    plt.subplots_adjust(top=1, bottom=0, left=0, right=1, hspace=0, wspace=0)
+
+    # plt.title('num')
+    plt.savefig("temp.jpg", dpi=500, bbox_inches='tight', pad_inches=0)
     plt.show()
 
 
