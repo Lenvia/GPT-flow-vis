@@ -91,8 +91,8 @@ def make_snapshot():
     scale = 3
 
     # 创建二维数组
-    x_dim = 780*scale
-    y_dim = 480*scale
+    x_dim = 780 * scale
+    y_dim = 480 * scale
     grid = np.zeros((x_dim, y_dim))
 
     # 遍历所有点，保存z坐标在0~1范围内的点到二维数组中
@@ -102,13 +102,12 @@ def make_snapshot():
         if np.nan in coord:
             continue
         if 0 <= z <= 1:
-            grid[int(np.round(x*scale))][int(np.round(y*scale))] += 1
+            grid[int(np.round(x * scale))][int(np.round(y * scale))] += 1
 
     # 打印二维数组
     # print(grid)
 
     # 使用matplotlib绘制二维数组
-
 
     # plt.colorbar(label='num')
 

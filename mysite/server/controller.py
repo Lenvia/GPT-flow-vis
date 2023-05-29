@@ -7,6 +7,7 @@ import json
 import re
 from .gpt.prompts import prompts, index2key
 from .gpt.access import chat
+import experiment.flow.glo_var as glo_var
 
 
 def dispatch(text):
@@ -28,23 +29,29 @@ def handle_message(text):
         process_id = dispatch(text)
         print("即将跳转：", process_id)
 
-        if process_id == 1:
-            pic_path = process_1(process_id, text)
-
+        if process_id == 1:  # 撒点
+            pic_path = process_seed(process_id, text)
             # 制作消息
             data = {
                 "id": 1,
                 "data": pic_path
             }
+        if process_id == 3:  # 询问数据集
+            status, info = process_dataset(process_id, text)
+            data = {
+                "id": 3,
+                "data": info,
+                "status": status
+            }
 
-            return data
+        return data
     except Exception as e:
         print(e)
         return None
 
 
 # seed 播撒种子点生成流线返回图像
-def process_1(process_id, text):
+def process_seed(process_id, text):
     system_prompt = prompts[index2key[process_id]]
     resp = chat(system_prompt, [text])  # 配置文件回答
 
@@ -62,3 +69,13 @@ def process_1(process_id, text):
         return pic_path
 
     return pic_path
+
+
+def process_dataset(process_id, text):
+    if glo_var.dataset_info is None:
+        return -1, "Error"
+
+    system_prompt = prompts[index2key[process_id]]
+    query = glo_var.dataset_info + "\n\n" + text
+    resp = chat(system_prompt, [query])  # 配置文件回答
+    return 1, resp

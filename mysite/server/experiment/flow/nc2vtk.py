@@ -6,12 +6,13 @@ from vtkmodules.util.numpy_support import numpy_to_vtk
 from vtkmodules.util.vtkConstants import VTK_FLOAT, VTK_INT
 from vtkmodules.vtkCommonDataModel import vtkRectilinearGrid
 from vtkmodules.vtkIOLegacy import vtkRectilinearGridWriter
+import glo_var
 
 
 def quicklook(input_path):
     # 加载.nc文件
     ds = xr.open_dataset(input_path)
-    print(ds.info())
+    print(str(ds.info()))
 
 
 def nc2vtk(file_name, nc_base_dir, vtk_base_dir):
@@ -22,7 +23,8 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir):
     # print(ds.variables)
     # print(ds.dims)
     # print(ds.coords)
-    print(ds.info())
+    # print(ds.info())
+    glo_var.dataset_info = str(ds.info())
 
     # 提取u和v变量
     if len(ds.u.shape) == 4:
