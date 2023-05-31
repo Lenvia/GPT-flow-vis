@@ -20,7 +20,7 @@ from vtkmodules.vtkRenderingCore import vtkWindowToImageFilter, vtkDataSetMapper
     vtkRenderWindow, vtkRenderWindowInteractor, vtkPolyDataMapper
 
 
-def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None, yrange=None, zrange=None,
+def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None, yrange=None, level=0,
                         number_of_points=1000):
     reader = vtkRectilinearGridReader()
     reader.SetFileName(os.path.join(vtk_base_dir, filename))
@@ -32,7 +32,7 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     # 设置撒点区域
     xmin, xmax = xrange
     ymin, ymax = yrange
-    zmin, zmax = zrange
+    # zmin, zmax = zrange
     nseeds = number_of_points
 
     # 随机生成种子点
@@ -40,7 +40,8 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     for i in range(nseeds):
         seed_x = random.uniform(xmin, xmax)
         seed_y = random.uniform(ymin, ymax)
-        seed_z = random.uniform(zmin, zmax)
+        # seed_z = random.uniform(zmin, zmax)
+        seed_z = level
         seeds.InsertNextPoint(seed_x, seed_y, seed_z)
     source = vtkPolyData()
     source.SetPoints(seeds)
@@ -128,12 +129,12 @@ def make_snapshot():
 
 
 if __name__ == "__main__":
-    # generate_streamline(filename="IWP_DAILY_20141123.vtk",
-    #                     vtk_base_dir="../data/vtk_flow_field",
-    #                     streamline_base_dir="../data/streamlines",
-    #                     xrange=[0, 780],
-    #                     yrange=[0, 480],
-    #                     zrange=[0, 1],
-    #                     number_of_points=1000)
+    generate_streamline(filename="IWP_DAILY_20141123.vtk",
+                        vtk_base_dir="../data/vtk_flow_field",
+                        streamline_base_dir="../data/streamlines",
+                        xrange=[0, 780],
+                        yrange=[0, 480],
+                        level=0,
+                        number_of_points=1000)
 
-    make_snapshot()
+    # make_snapshot()

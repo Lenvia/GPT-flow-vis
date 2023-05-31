@@ -15,7 +15,7 @@ def quicklook(input_path):
     print(str(ds.info()))
 
 
-def nc2vtk(file_name, nc_base_dir, vtk_base_dir):
+def nc2vtk(file_name, nc_base_dir, vtk_base_dir, level=0):
     input_path = os.path.join(nc_base_dir, file_name)
     # 加载.nc文件
     ds = xr.open_dataset(input_path)
@@ -34,24 +34,31 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir):
         u = ds.u.values
         v = ds.v.values
 
+    # 对nan值进行处理
+    u = np.where(np.isnan(u), 0, u)
+    u = u[level]
+
+    v = np.where(np.isnan(v), 0, v)
+    v = v[level]
+
     # 获取坐标值并转换为 NumPy 数组
     depth = ds.depth.values
     lat = ds.lat.values
     lon = ds.lon.values
 
     # 创建网格信息
-    xdim, ydim, zdim = len(lon), len(lat), len(depth)
+    xdim, ydim, _ = len(lon), len(lat), len(depth)
 
     x = np.arange(0, xdim, 1, dtype='float64')  # np.arrange(起点，终点，步长）
     y = np.arange(0, ydim, 1, dtype='float64')
-    z = np.arange(0, zdim, 1, dtype='float64')
+    z = np.arange(0, 1, 1, dtype='float64')
 
-    x_coo = numpy_to_vtk(num_array=x, deep=True, array_type=VTK_INT)
-    y_coo = numpy_to_vtk(num_array=y, deep=True, array_type=VTK_INT)
-    z_coo = numpy_to_vtk(num_array=z, deep=True, array_type=VTK_INT)
+    x_coo = numpy_to_vtk(num_array=x, deep=True, array_type=VTK_FLOAT)
+    y_coo = numpy_to_vtk(num_array=y, deep=True, array_type=VTK_FLOAT)
+    z_coo = numpy_to_vtk(num_array=z, deep=True, array_type=VTK_FLOAT)
 
     grid = vtkRectilinearGrid()
-    grid.SetDimensions(xdim, ydim, zdim)
+    grid.SetDimensions(xdim, ydim, 1)
     grid.SetXCoordinates(x_coo)
     grid.SetYCoordinates(y_coo)
     grid.SetZCoordinates(z_coo)
@@ -77,5 +84,5 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir):
 
 
 if __name__ == '__main__':
-    # nc2vtk('IWP_DAILY_20141123.nc', "../data/nc_flow_field", "../data/vtk_flow_field")
-    quicklook('../data/nc_flow_field/IWP_DAILY_20141123.nc')
+    nc2vtk('IWP_DAILY_20141123.nc', "../data/nc_flow_field", "../data/vtk_flow_field")
+    # quicklook('../data/nc_flow_field/IWP_DAILY_20141123.nc')
