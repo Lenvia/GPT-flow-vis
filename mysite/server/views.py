@@ -5,7 +5,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import HttpResponse, JsonResponse
 import json
-from .experiment.flow.nc2vtk import nc2vtk
+
 from django.views.decorators.csrf import csrf_exempt
 from .experiment.flow import glo_var
 
@@ -33,10 +33,6 @@ def uploadNC(request):
         file_name = json_data.get('file_name')
         glo_var.file_name = file_name
         print("nc2vtk: ", file_name)
-        try:
-            nc2vtk(file_name, glo_var.nc_base_dir, glo_var.vtk_base_dir)
-        except Exception as e:
-            print(e)
 
         data = {'data': "OK"}
         response = JsonResponse(data)

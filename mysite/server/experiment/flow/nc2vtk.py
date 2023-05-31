@@ -36,22 +36,28 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir, level=0):
 
     # 对nan值进行处理
     u = np.where(np.isnan(u), 0, u)
-    u = u[level]
-
     v = np.where(np.isnan(v), 0, v)
-    v = v[level]
 
     # 获取坐标值并转换为 NumPy 数组
     depth = ds.depth.values
     lat = ds.lat.values
     lon = ds.lon.values
 
+    if level == -1:
+        level = len(depth) - 1
+
+    u = u[level]
+    v = v[level]
+
     # 创建网格信息
     xdim, ydim, _ = len(lon), len(lat), len(depth)
 
+    glo_var.xdim = xdim
+    glo_var.ydim = ydim
+
     x = np.arange(0, xdim, 1, dtype='float64')  # np.arrange(起点，终点，步长）
     y = np.arange(0, ydim, 1, dtype='float64')
-    z = np.arange(0, 1, 1, dtype='float64')
+    z = np.arange(level, level + 1, 1, dtype='float64')
 
     x_coo = numpy_to_vtk(num_array=x, deep=True, array_type=VTK_FLOAT)
     y_coo = numpy_to_vtk(num_array=y, deep=True, array_type=VTK_FLOAT)
@@ -75,7 +81,9 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir, level=0):
     # 写入vtk文件
     writer = vtkRectilinearGridWriter()
 
-    output_path = os.path.join(vtk_base_dir, file_name.split('.')[0] + '.vtk')
+    glo_var.vtk_file_name = file_name.split('.')[0] + '_' + str(level) + '.vtk'
+
+    output_path = os.path.join(vtk_base_dir, glo_var.vtk_file_name)
     writer.SetFileName(output_path)
     writer.SetInputData(grid)
     writer.Write()

@@ -1,4 +1,5 @@
 # from vtkmodules.all import *  # 当你不知道引入哪个包时，就打开本行注释，全部引入
+import ctypes
 import os.path
 import random
 
@@ -18,6 +19,8 @@ import matplotlib.pyplot as plt
 from vtkmodules.vtkImagingCore import vtkImageReslice
 from vtkmodules.vtkRenderingCore import vtkWindowToImageFilter, vtkDataSetMapper, vtkActor, vtkRenderer, \
     vtkRenderWindow, vtkRenderWindowInteractor, vtkPolyDataMapper
+
+from mysite.server.experiment.flow import glo_var
 
 
 def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None, yrange=None, level=0,
@@ -70,6 +73,9 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     now = datetime.datetime.now()
     out_put = filename.split('.')[0] + "_{}{}_{}{}.vtk".format(now.month, now.day, now.hour, now.minute)
 
+    glo_var.streamline_file_name = out_put
+    glo_var.pics_name = out_put.split('.')[0] + ".png"
+
     writer.SetFileName(os.path.join(streamline_base_dir, out_put))
     writer.SetInputConnection(streamer.GetOutputPort())
     writer.Write()
@@ -77,64 +83,24 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     print('done!')
 
 
-def make_snapshot():
-    # 读取 VTK 文件
-    # 创建一个vtk reader
-    reader = vtkPolyDataReader()
-    reader.SetFileName('../data/streamlines/IWP_DAILY_20141123_526_2121.vtk')
-    reader.Update()
-
-    # 获取点的坐标
-    polydata = reader.GetOutput()
-    points = polydata.GetPoints()
-    coords = vtk_to_numpy(points.GetData())
-
-    scale = 3
-
-    # 创建二维数组
-    x_dim = 780 * scale
-    y_dim = 480 * scale
-    grid = np.zeros((x_dim, y_dim))
-
-    # 遍历所有点，保存z坐标在0~1范围内的点到二维数组中
-    for coord in coords:
-        x, y, z = coord
-
-        if np.nan in coord:
-            continue
-        if 0 <= z <= 1:
-            grid[int(np.round(x * scale))][int(np.round(y * scale))] += 1
-
-    # 打印二维数组
-    # print(grid)
-
-    # 使用matplotlib绘制二维数组
-
-    # plt.colorbar(label='num')
-
-    # plt.xlabel('X')
-    # plt.ylabel('Y')
-    # 去除白框
-    plt.imshow(grid)
-    plt.clim(0, max(1, int(5 / scale)))
-    plt.axis('off')
-    # plt.margins(0, 0)
-
-    # 调整图像的边距
-    plt.subplots_adjust(top=1, bottom=0, left=0, right=1, hspace=0, wspace=0)
-
-    # plt.title('num')
-    plt.savefig("temp.jpg", dpi=500, bbox_inches='tight', pad_inches=0)
-    plt.show()
+def make_snapshot(file_name, width, height, output):  # output 必须是绝对路径
+    lib = ctypes.cdll.LoadLibrary('../CProj/build/libstreamline.dylib')
+    # 调用函数
+    gen = lib.gen
+    gen.restype = None
+    gen.argtypes = [ctypes.c_char_p, ctypes.c_int, ctypes.c_int, ctypes.c_char_p]
+    gen(file_name.encode('utf-8'), width, height, output.encode('utf-8'))
 
 
 if __name__ == "__main__":
-    generate_streamline(filename="IWP_DAILY_20141123.vtk",
-                        vtk_base_dir="../data/vtk_flow_field",
-                        streamline_base_dir="../data/streamlines",
-                        xrange=[0, 780],
-                        yrange=[0, 480],
-                        level=0,
-                        number_of_points=1000)
+    # generate_streamline(filename="IWP_DAILY_20141123.vtk",
+    #                     vtk_base_dir="../data/vtk_flow_field",
+    #                     streamline_base_dir="../data/streamlines",
+    #                     xrange=[0, 780],
+    #                     yrange=[0, 480],
+    #                     level=0,
+    #                     number_of_points=1000)
 
-    # make_snapshot()
+    make_snapshot(
+        "../data/streamlines/IWP_DAILY_20141123_531_1621.vtk",
+        780, 480, "/Users/yy/GithubProjects/GPT-flow-vis/mysite/server/experiment/111.png")
