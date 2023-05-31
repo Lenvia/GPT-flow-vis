@@ -15,7 +15,7 @@ import ctypes
 # say_hello()
 
 # 加载库
-lib = ctypes.cdll.LoadLibrary('/Users/yy/CLionProjects/vtkm-flow/cmake-build-debug/libstreamline.dylib')
+lib = ctypes.cdll.LoadLibrary('CProj/build/libstreamline.dylib')
 
 file_name = "/Users/yy/GithubProjects/GPT-flow-vis/mysite/server/experiment/data/streamlines/IWP_DAILY_20141123_531_1621.vtk"
 width = 780

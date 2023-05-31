@@ -139,3 +139,4 @@ tmp
 *.sqlite3
 *.nc
 *.vtk
+**/build
