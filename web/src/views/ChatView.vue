@@ -53,6 +53,7 @@ import {dialog} from 'electron';
 import path from 'path';
 import {useWebSocket} from "@/plugin/websocket";
 import http from '@/plugin/request';
+import emitter from "@/bus";
 
 const areaInput = ref('')
 const fileName = ref('');
@@ -85,6 +86,10 @@ export default {
       console.log("发送消息： ", areaInput.value)
       ws.value?.send(areaInput.value);
     }
+
+    emitter.on('flush_pic',  e=>{
+      console.log('flush_pic', e)
+    })
 
     const handleEnter = (event: KeyboardEvent) => {
       // 处理 Enter 键按下事件

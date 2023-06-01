@@ -90,10 +90,10 @@ def process_seed(process_id, text):
                 # dev 用
                 gInfo.xdim = 780
                 gInfo.ydim = 480
-                gInfo.vtk_file_name = clip_path
+                gInfo.vtk_file_name = clip_name
+                # print("Error")
+                # return pic_path
 
-                print("Error")
-                return pic_path
             # 生成流线
             xmin = int(seedItem["xmin"])
             xmax = int(seedItem["xmax"])
@@ -115,7 +115,7 @@ def process_seed(process_id, text):
             print(pic_path)
             make_snapshot(file_name=os.path.join(streamline_base_dir, gInfo.streamline_file_name), width=gInfo.xdim,
                           height=gInfo.ydim, output=pic_path)
-            return pic_path
+            return gInfo.pics_name
 
         except Exception as e:
             print(e)

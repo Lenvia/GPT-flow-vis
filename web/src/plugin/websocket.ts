@@ -1,4 +1,5 @@
 import { ref, onMounted, onUnmounted } from 'vue'
+import emitter from '../bus'
 
 const wsUrl = 'ws://localhost:9900/ws/'
 
@@ -14,7 +15,16 @@ export const useWebSocket = () => {
         }
 
         ws.value.onmessage = (event) => {
-            console.log('接收到 WebSocket 消息：', event.data)
+            console.log('接收到 WebSocket 消息：', )
+
+            const resp = JSON.parse(event.data);
+            const id = resp.id;
+
+            if(id === 1){
+                console.log(resp.data);
+                emitter.emit('flush_pic', {'pic_name': resp.data});
+            }
+
         }
 
         ws.value.onclose = (event) => {
