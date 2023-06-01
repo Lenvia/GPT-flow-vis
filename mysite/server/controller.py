@@ -112,7 +112,7 @@ def process_seed(process_id, text):
             print("--------check--------", pics_base_dir, gInfo.pics_name)
             # 生成图片
             pic_path = os.path.abspath(os.path.join(pics_base_dir, gInfo.pics_name))
-            print(pic_path)
+
             make_snapshot(file_name=os.path.join(streamline_base_dir, gInfo.streamline_file_name), width=gInfo.xdim,
                           height=gInfo.ydim, output=pic_path)
             return gInfo.pics_name

@@ -87,13 +87,14 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
 
 
 def make_snapshot(file_name, width, height, output):  # output 必须是绝对路径
-    print(file_name, width, height, output)
     lib = ctypes.cdll.LoadLibrary('server/experiment/CProj/build/libstreamline.dylib')
     # 调用函数
     gen = lib.gen
     gen.restype = None
     gen.argtypes = [ctypes.c_char_p, ctypes.c_int, ctypes.c_int, ctypes.c_char_p]
     gen(file_name.encode('utf-8'), width, height, output.encode('utf-8'))
+
+    print("snapshot saved.")
 
 
 if __name__ == "__main__":

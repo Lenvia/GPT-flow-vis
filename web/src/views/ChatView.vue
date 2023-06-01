@@ -31,11 +31,13 @@
       </el-row>
 
       <el-row class="full-width flex_row" style="height: 80%">
-        <el-col class="full-height" :span="16">
-          <div class="full-size bg-color-aqua">123</div>
+        <el-col class="full-height" :span="12">
+          <div class="full-size" style="background-color: black">
+            <img :src="imgSrc" :style="{ width: '100%', height: 'auto' }" alt="streamline"/>
+          </div>
         </el-col>
 
-        <el-col class="full-height" :span="8">
+        <el-col class="full-height" :span="12">
           <div class="full-size bg-color-aliceblue">456</div>
         </el-col>
       </el-row>
@@ -48,7 +50,7 @@
 import {ElInput, ElCol, ElRow, ElButton, ElUpload, ElIcon} from 'element-plus'
 import {Upload} from '@element-plus/icons-vue'
 
-import {ref, onMounted, getCurrentInstance} from 'vue'
+import {ref, onMounted, getCurrentInstance, onUnmounted} from 'vue'
 import {dialog} from 'electron';
 import path from 'path';
 import {useWebSocket} from "@/plugin/websocket";
@@ -57,6 +59,7 @@ import emitter from "@/bus";
 
 const areaInput = ref('')
 const fileName = ref('');
+
 
 export default {
   name: "ChatView",
@@ -70,6 +73,8 @@ export default {
   setup() {
 
     const {ws} = useWebSocket()
+
+    const imgSrc = ref('');
 
     const handleChange = async (file: File) => {
       fileName.value = file.name;
@@ -87,9 +92,13 @@ export default {
       ws.value?.send(areaInput.value);
     }
 
-    emitter.on('flush_pic',  e=>{
-      console.log('flush_pic', e)
-    })
+    const flushPicHandler = (e: unknown) => {
+      let event = e as { pic_name: string };
+
+      let path = `@/assets/${event.pic_name}`
+      console.log(path)
+      imgSrc.value = require(path);
+    };
 
     const handleEnter = (event: KeyboardEvent) => {
       // 处理 Enter 键按下事件
@@ -103,12 +112,23 @@ export default {
       }
     };
 
+    onMounted(() => {
+      emitter.on('flush_pic', flushPicHandler);
+    });
+
+    onUnmounted(() => {
+      emitter.off('flush_pic', flushPicHandler);
+    });
+
+
+
     return {
       areaInput,
       submit,
       handleEnter,
       fileName,
-      handleChange
+      handleChange,
+      imgSrc,
     }
   }
 }
