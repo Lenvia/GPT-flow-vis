@@ -7,7 +7,7 @@ from django.http import HttpResponse, JsonResponse
 import json
 
 from django.views.decorators.csrf import csrf_exempt
-from .experiment.flow import glo_var
+from .experiment.flow.glo_var import gInfo
 
 
 def my_view(request):
@@ -31,8 +31,9 @@ def uploadNC(request):
         json_data = json.loads(data)
         # 获取文件名
         file_name = json_data.get('file_name')
-        glo_var.file_name = file_name
-        print("nc2vtk: ", file_name)
+        gInfo.file_name = file_name
+
+        print("select: ", gInfo.file_name)
 
         data = {'data': "OK"}
         response = JsonResponse(data)

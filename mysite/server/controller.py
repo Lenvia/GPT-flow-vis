@@ -10,7 +10,7 @@ import re
 from .experiment.flow.streamline_vtk import generate_streamline, make_snapshot
 from .gpt.prompts import prompts, index2key
 from .gpt.access import chat
-import experiment.flow.glo_var as glo_var
+from .experiment.flow.glo_var import gInfo, streamline_base_dir, vtk_base_dir, nc_base_dir, pics_base_dir
 from .experiment.flow.nc2vtk import nc2vtk
 
 
@@ -67,38 +67,54 @@ def process_seed(process_id, text):
     if len(matches) > 0:
         match = matches[0]
         json_config = json.loads(match)  # 解析为JSON格式
-        print(json_config)
+        seedItem = json_config['seedItem']
+
+        print(seedItem)
+        gInfo.print_attributes()
+
         # TODO 根据 json_config 调用 播撒函数，得到图片的路径
 
-        if glo_var.file_name is None:
+        if seedItem is None or gInfo.file_name is None:
+            print("Error")
             return pic_path
 
-        level = int(json_config["level"])
-
         try:
-            # 生成流场vtk
-            if not os.path.exists(
-                    os.path.join(glo_var.vtk_base_dir, glo_var.file_name.split('.')[0] + '_' + str(level) + '.vtk')):
-                nc2vtk(glo_var.file_name, glo_var.nc_base_dir, glo_var.vtk_base_dir, level)
-            # 生成流线
-            xmin = int(json_config["xmin"])
-            xmax = int(json_config["xmax"])
-            ymin = int(json_config["ymin"])
-            ymax = int(json_config["ymax"])
-            nseeds = int(json_config["nseeds"])
+            level = int(seedItem['level'])
 
-            generate_streamline(filename=glo_var.vtk_file_name,
-                                vtk_base_dir=glo_var.vtk_base_dir,
-                                streamline_base_dir=glo_var.streamline_base_dir,
+            # 生成流场vtk
+            clip_name = gInfo.file_name.split('.')[0] + '_' + str(level) + '.vtk'
+            clip_path = os.path.join(vtk_base_dir, clip_name)
+            if not os.path.exists(clip_path):
+                nc2vtk(gInfo.file_name, nc_base_dir, vtk_base_dir, level)
+            else:  # 已经生成过切片了，那么 xdim, ydim这些信息是有的
+                # dev 用
+                gInfo.xdim = 780
+                gInfo.ydim = 480
+                gInfo.vtk_file_name = clip_path
+
+                print("Error")
+                return pic_path
+            # 生成流线
+            xmin = int(seedItem["xmin"])
+            xmax = int(seedItem["xmax"])
+            ymin = int(seedItem["ymin"])
+            ymax = int(seedItem["ymax"])
+            nseeds = int(seedItem["nseeds"])
+
+            print("--------check--------")
+            generate_streamline(filename=gInfo.vtk_file_name,
+                                vtk_base_dir=vtk_base_dir,
+                                streamline_base_dir=streamline_base_dir,
                                 xrange=[xmin, xmax],
                                 yrange=[ymin, ymax],
                                 level=level,
                                 number_of_points=nseeds)
-
+            print("--------check--------", pics_base_dir, gInfo.pics_name)
             # 生成图片
-            pic_path = os.path.abspath(os.path.join(glo_var.pics_base_dir, glo_var.pics_name))
-            make_snapshot(os.path.join(glo_var.streamline_base_dir, glo_var.streamline_file_name), glo_var.xdim,
-                          glo_var.ydim)
+            pic_path = os.path.abspath(os.path.join(pics_base_dir, gInfo.pics_name))
+            print(pic_path)
+            make_snapshot(file_name=os.path.join(streamline_base_dir, gInfo.streamline_file_name), width=gInfo.xdim,
+                          height=gInfo.ydim, output=pic_path)
             return pic_path
 
         except Exception as e:
@@ -110,10 +126,10 @@ def process_seed(process_id, text):
 
 
 def process_dataset(process_id, text):
-    if glo_var.dataset_info is None:
+    if gInfo.dataset_info is None:
         return -1, "Error"
 
     system_prompt = prompts[index2key[process_id]]
-    query = glo_var.dataset_info + "\n\n" + text
+    query = gInfo.dataset_info + "\n\n" + text
     resp = chat(system_prompt, [query])  # 配置文件回答
     return 1, resp

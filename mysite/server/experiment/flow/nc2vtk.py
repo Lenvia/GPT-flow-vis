@@ -6,7 +6,7 @@ from vtkmodules.util.numpy_support import numpy_to_vtk
 from vtkmodules.util.vtkConstants import VTK_FLOAT, VTK_INT
 from vtkmodules.vtkCommonDataModel import vtkRectilinearGrid
 from vtkmodules.vtkIOLegacy import vtkRectilinearGridWriter
-import glo_var
+from .glo_var import gInfo
 
 
 def quicklook(input_path):
@@ -24,7 +24,7 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir, level=0):
     # print(ds.dims)
     # print(ds.coords)
     # print(ds.info())
-    glo_var.dataset_info = str(ds.info())
+    gInfo.dataset_info = str(ds.info())
 
     # 提取u和v变量
     if len(ds.u.shape) == 4:
@@ -52,8 +52,8 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir, level=0):
     # 创建网格信息
     xdim, ydim, _ = len(lon), len(lat), len(depth)
 
-    glo_var.xdim = xdim
-    glo_var.ydim = ydim
+    gInfo.xdim = xdim
+    gInfo.ydim = ydim
 
     x = np.arange(0, xdim, 1, dtype='float64')  # np.arrange(起点，终点，步长）
     y = np.arange(0, ydim, 1, dtype='float64')
@@ -81,9 +81,9 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir, level=0):
     # 写入vtk文件
     writer = vtkRectilinearGridWriter()
 
-    glo_var.vtk_file_name = file_name.split('.')[0] + '_' + str(level) + '.vtk'
+    gInfo.vtk_file_name = file_name.split('.')[0] + '_' + str(level) + '.vtk'
 
-    output_path = os.path.join(vtk_base_dir, glo_var.vtk_file_name)
+    output_path = os.path.join(vtk_base_dir, gInfo.vtk_file_name)
     writer.SetFileName(output_path)
     writer.SetInputData(grid)
     writer.Write()

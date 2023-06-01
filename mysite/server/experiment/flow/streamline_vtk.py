@@ -20,12 +20,14 @@ from vtkmodules.vtkImagingCore import vtkImageReslice
 from vtkmodules.vtkRenderingCore import vtkWindowToImageFilter, vtkDataSetMapper, vtkActor, vtkRenderer, \
     vtkRenderWindow, vtkRenderWindowInteractor, vtkPolyDataMapper
 
-from mysite.server.experiment.flow import glo_var
+from .glo_var import gInfo
 
 
 def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None, yrange=None, level=0,
                         number_of_points=1000):
     reader = vtkRectilinearGridReader()
+
+    print("--------check--------", vtk_base_dir, filename)
     reader.SetFileName(os.path.join(vtk_base_dir, filename))
     reader.Update()
 
@@ -73,9 +75,10 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     now = datetime.datetime.now()
     out_put = filename.split('.')[0] + "_{}{}_{}{}.vtk".format(now.month, now.day, now.hour, now.minute)
 
-    glo_var.streamline_file_name = out_put
-    glo_var.pics_name = out_put.split('.')[0] + ".png"
+    gInfo.streamline_file_name = out_put
+    gInfo.pics_name = out_put.split('.')[0] + ".png"
 
+    print("--------check--------", streamline_base_dir, out_put)
     writer.SetFileName(os.path.join(streamline_base_dir, out_put))
     writer.SetInputConnection(streamer.GetOutputPort())
     writer.Write()
@@ -84,7 +87,8 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
 
 
 def make_snapshot(file_name, width, height, output):  # output 必须是绝对路径
-    lib = ctypes.cdll.LoadLibrary('../CProj/build/libstreamline.dylib')
+    print(file_name, width, height, output)
+    lib = ctypes.cdll.LoadLibrary('server/experiment/CProj/build/libstreamline.dylib')
     # 调用函数
     gen = lib.gen
     gen.restype = None
