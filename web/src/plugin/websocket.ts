@@ -22,7 +22,7 @@ export const useWebSocket = () => {
 
             if(id === 1){
                 console.log(resp.data);
-                emitter.emit('flush_pic', {'pic_name': resp.data});
+                emitter.emit('flush_pic', {'base64ImageData': resp.data});
             }
 
         }

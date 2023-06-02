@@ -33,7 +33,7 @@
       <el-row class="full-width flex_row" style="height: 80%">
         <el-col class="full-height" :span="12">
           <div class="full-size" style="background-color: black">
-            <img :src="imgSrc" :style="{ width: '100%', height: 'auto' }" alt="streamline"/>
+            <img :src="`data:image/png;base64,${imgSrc}`" :style="{ width: '100%', height: 'auto' }" alt="streamline" />
           </div>
         </el-col>
 
@@ -51,15 +51,12 @@ import {ElInput, ElCol, ElRow, ElButton, ElUpload, ElIcon} from 'element-plus'
 import {Upload} from '@element-plus/icons-vue'
 
 import {ref, onMounted, getCurrentInstance, onUnmounted} from 'vue'
-import {dialog} from 'electron';
-import path from 'path';
 import {useWebSocket} from "@/plugin/websocket";
 import http from '@/plugin/request';
 import emitter from "@/bus";
 
 const areaInput = ref('')
 const fileName = ref('');
-
 
 export default {
   name: "ChatView",
@@ -93,11 +90,8 @@ export default {
     }
 
     const flushPicHandler = (e: unknown) => {
-      let event = e as { pic_name: string };
-
-      let path = `@/assets/${event.pic_name}`
-      console.log(path)
-      imgSrc.value = require(path);
+      let event = e as { base64ImageData: string };
+      imgSrc.value = event.base64ImageData;
     };
 
     const handleEnter = (event: KeyboardEvent) => {
@@ -119,8 +113,6 @@ export default {
     onUnmounted(() => {
       emitter.off('flush_pic', flushPicHandler);
     });
-
-
 
     return {
       areaInput,

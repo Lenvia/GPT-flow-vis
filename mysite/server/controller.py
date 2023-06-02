@@ -3,6 +3,7 @@
 @author: Runpu
 @time: 2023/5/24 12:30
 """
+import base64
 import json
 import os.path
 import re
@@ -34,11 +35,11 @@ def handle_message(text):
         print("即将跳转：", process_id)
 
         if process_id == 1:  # 撒点
-            pic_path = process_seed(process_id, text)
+            base64ImageData = process_seed(process_id, text)
             # 制作消息
             data = {
                 "id": 1,
-                "data": pic_path
+                "data": base64ImageData
             }
         if process_id == 3:  # 询问数据集
             status, info = process_dataset(process_id, text)
@@ -63,7 +64,7 @@ def process_seed(process_id, text):
     matches = re.findall(pattern, resp, re.DOTALL)  # 考虑存在换行符
     matches = [match.replace('\n', '') for match in matches]
 
-    pic_path = ""
+    base64ImageData = ""
     if len(matches) > 0:
         match = matches[0]
         json_config = json.loads(match)  # 解析为JSON格式
@@ -76,7 +77,7 @@ def process_seed(process_id, text):
 
         if seedItem is None or gInfo.file_name is None:
             print("Error")
-            return pic_path
+            return base64ImageData
 
         try:
             level = int(seedItem['level'])
@@ -113,16 +114,19 @@ def process_seed(process_id, text):
             # 生成图片
             pic_path = os.path.abspath(os.path.join(pics_base_dir, gInfo.pics_name))
 
-            make_snapshot(file_name=os.path.join(streamline_base_dir, gInfo.streamline_file_name), width=gInfo.xdim,
-                          height=gInfo.ydim, output=pic_path)
-            return gInfo.pics_name
+            make_snapshot(file_name=os.path.join(streamline_base_dir, gInfo.streamline_file_name), width=2*gInfo.xdim,
+                          height=2*gInfo.ydim, output=pic_path)
+
+            with open(pic_path, 'rb') as f:
+                image_data = f.read()
+                base64ImageData = base64.b64encode(image_data).decode('utf-8')
 
         except Exception as e:
             print(e)
 
-        return pic_path
+        return base64ImageData
 
-    return pic_path
+    return base64ImageData
 
 
 def process_dataset(process_id, text):
