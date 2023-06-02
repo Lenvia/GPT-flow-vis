@@ -7,7 +7,7 @@ from vtkmodules.util import colors
 from vtkmodules.util.numpy_support import vtk_to_numpy
 from vtkmodules.vtkCommonDataModel import vtkPolyData, vtkPlane
 from vtkmodules.vtkCommonCore import vtkPoints
-from vtkmodules.vtkFiltersCore import vtkCutter
+from vtkmodules.vtkFiltersCore import vtkCutter, vtkAppendPolyData
 from vtkmodules.vtkFiltersFlowPaths import vtkStreamTracer
 from vtkmodules.vtkFiltersGeometry import vtkImageDataGeometryFilter
 from vtkmodules.vtkIOImage import vtkPNGWriter
@@ -40,6 +40,8 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     # zmin, zmax = zrange
     nseeds = number_of_points
 
+    # print(xrange, yrange)
+
     # 随机生成种子点
     seeds = vtkPoints()
     for i in range(nseeds):
@@ -47,7 +49,8 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
         seed_y = random.uniform(ymin, ymax)
         # seed_z = random.uniform(zmin, zmax)
         seed_z = level
-        seeds.InsertNextPoint(seed_x, seed_y, seed_z)
+        seeds.InsertNextPoint((seed_x, seed_y, seed_z))
+        # print(seed_x, seed_y, seed_z)
     source = vtkPolyData()
     source.SetPoints(seeds)
 
@@ -59,8 +62,10 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     streamer.SetInitialIntegrationStep(0.1)
     streamer.SetIntegratorTypeToRungeKutta45()
     streamer.SetIntegrationDirectionToBoth()
-    streamer.SetComputeVorticity(True)
+    # streamer.SetComputeVorticity(True)
     streamer.SetMaximumNumberOfSteps(2000)
+    streamer.Update()  # 必须更新！！！！
+    streamer_output = streamer.GetOutput()
 
     # streamer.SetComputeStreamFunction(True)
     # streamer.SetIntegrationStepUnitToCellLengthUnit()
@@ -68,9 +73,24 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     # streamer.SetInterpolatorTypeToDataSetPointLocator()
     # streamer.SetInterpolatorTypeToKochanekSpline()
 
+    # 由于流线不具有边界，所以需要再插入4个孤立点
+    isolated_point = vtkPoints()
+    isolated_point.InsertNextPoint((0, 0, 0))
+    isolated_point.InsertNextPoint((gInfo.xdim-1, 0, 0))
+    isolated_point.InsertNextPoint((0, gInfo.ydim-1, 0))
+    isolated_point.InsertNextPoint((gInfo.xdim-1, gInfo.ydim-1, 0))
+    isolated_polydata = vtkPolyData()
+    isolated_polydata.SetPoints(isolated_point)
+
+    # 创建一个新的 vtkAppendPolyData 对象，用来组合流线和孤立点
+    appendFilter = vtkAppendPolyData()
+    appendFilter.AddInputData(streamer_output)  # 添加流线数据
+    appendFilter.AddInputData(isolated_polydata)  # 添加孤立点数据
+    appendFilter.Update()  # 更新 appendFilter
+    combined_data = appendFilter.GetOutput()  # 获取合并后的数据
+
     # 保存流线为vtk文件
     writer = vtkPolyDataWriter()
-
     # 根据时间戳生成文件名
     now = datetime.datetime.now()
     out_put = filename.split('.')[0] + "_{}{}_{}{}.vtk".format(now.month, now.day, now.hour, now.minute)
@@ -80,7 +100,10 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
 
     print("--------check--------", streamline_base_dir, out_put)
     writer.SetFileName(os.path.join(streamline_base_dir, out_put))
-    writer.SetInputConnection(streamer.GetOutputPort())
+
+    writer.SetInputData(combined_data)
+    # writer.SetInputConnection(streamer.GetOutputPort())
+
     writer.Write()
 
     print('done!')

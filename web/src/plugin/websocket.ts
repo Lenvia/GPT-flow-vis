@@ -15,13 +15,13 @@ export const useWebSocket = () => {
         }
 
         ws.value.onmessage = (event) => {
-            console.log('接收到 WebSocket 消息：', )
+            console.log('接收到 WebSocket 消息.')
 
             const resp = JSON.parse(event.data);
             const id = resp.id;
 
             if(id === 1){
-                console.log(resp.data);
+                // console.log(resp.data);
                 emitter.emit('flush_pic', {'base64ImageData': resp.data});
             }
 
