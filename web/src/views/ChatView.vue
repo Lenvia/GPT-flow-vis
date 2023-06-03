@@ -32,7 +32,7 @@
 
       <el-row class="full-width flex_row" style="height: 80%">
         <el-col class="full-height" :span="12">
-          <div class="full-size" style="background-color: black">
+          <div class="full-size" style="background-color: black;">
             <img :src="`data:image/png;base64,${imgSrc}`" :style="{ width: '100%', height: '60%' }" alt="streamline" />
 
             <el-input
@@ -40,7 +40,7 @@
                 :rows="14"
                 v-model="dataset_info"
                 readonly
-            ></el-input>
+            style="height:38%; overflow-y: auto;"></el-input>
           </div>
 
 
