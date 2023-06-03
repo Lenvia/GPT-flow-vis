@@ -33,8 +33,17 @@
       <el-row class="full-width flex_row" style="height: 80%">
         <el-col class="full-height" :span="12">
           <div class="full-size" style="background-color: black">
-            <img :src="`data:image/png;base64,${imgSrc}`" :style="{ width: '100%', height: 'auto' }" alt="streamline" />
+            <img :src="`data:image/png;base64,${imgSrc}`" :style="{ width: '100%', height: '60%' }" alt="streamline" />
+
+            <el-input
+                type="textarea"
+                :rows="14"
+                v-model="dataset_info"
+                readonly
+            ></el-input>
           </div>
+
+
         </el-col>
 
         <el-col class="full-height" :span="12">
@@ -69,6 +78,8 @@ export default {
 
   setup() {
 
+    const dataset_info = ref('')
+
     const {ws} = useWebSocket()
 
     const imgSrc = ref('');
@@ -81,7 +92,7 @@ export default {
         timeout: 20000
       })
 
-      console.log(response.data)
+      dataset_info.value = response.data
     };
 
     function submit() {
@@ -121,6 +132,7 @@ export default {
       fileName,
       handleChange,
       imgSrc,
+      dataset_info,
     }
   }
 }
