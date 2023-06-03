@@ -8,11 +8,10 @@ import json
 import os.path
 import re
 
-from .experiment.flow.streamline_vtk import generate_streamline, make_snapshot
+from .experiment.flow.vtk_helper import generate_streamline, make_snapshot, nc2vtk
 from .gpt.prompts import prompts, index2key
 from .gpt.access import chat
 from .experiment.flow.glo_var import gInfo, streamline_base_dir, vtk_base_dir, nc_base_dir, pics_base_dir
-from .experiment.flow.nc2vtk import nc2vtk
 
 
 def dispatch(text):
@@ -73,7 +72,7 @@ def process_seed(process_id, text):
         print(seedItem)
         gInfo.print_attributes()
 
-        # TODO 根据 json_config 调用 播撒函数，得到图片的路径
+        # 根据 json_config 调用 播撒函数，得到图片的路径
 
         if seedItem is None or gInfo.file_name is None:
             print("Error")

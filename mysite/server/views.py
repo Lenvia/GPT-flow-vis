@@ -7,7 +7,8 @@ from django.http import HttpResponse, JsonResponse
 import json
 
 from django.views.decorators.csrf import csrf_exempt
-from .experiment.flow.glo_var import gInfo
+from .experiment.flow.glo_var import gInfo, nc_base_dir
+from .experiment.flow.vtk_helper import quicklook
 
 
 def my_view(request):
@@ -35,7 +36,9 @@ def uploadNC(request):
 
         print("select: ", gInfo.file_name)
 
-        data = {'data': "OK"}
+        quicklook(os.path.join(nc_base_dir, gInfo.file_name))
+
+        data = {'data': gInfo.dataset_info}
         response = JsonResponse(data)
         return response
 
