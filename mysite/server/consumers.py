@@ -8,11 +8,13 @@ import pdb
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .controller import handle_message
+from server import connection
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
+        connection.active_consumer = self  # 当前连接
         print("Websocket已连接")
 
     async def disconnect(self, close_code):

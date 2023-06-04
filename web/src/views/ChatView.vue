@@ -51,7 +51,7 @@
             <el-card class="chat-box">
               <div class="messages">
                 <Message v-for="(message, index) in messages" :key="index" :content="message.content"
-                         :sender="message.sender"/>
+                         :role="message.role"/>
               </div>
             </el-card>
           </div>
@@ -75,11 +75,7 @@ import Message from '@/components/Message.vue';
 const areaInput = ref('')
 const fileName = ref('');
 const messages = ref([
-  {content: '欢迎加入', sender: 'system'},
-  {content: '欢迎加入', sender: 'system'},
-  {content: '欢迎加入', sender: 'system'},
-  {content: '欢迎加入', sender: 'system'},
-  {content: '欢迎加入', sender: 'system'},
+  {content: '欢迎加入', role: 'system'},
 ]);
 
 
@@ -114,12 +110,25 @@ export default {
     function submit() {
       console.log("发送消息： ", areaInput.value)
       ws.value?.send(areaInput.value);
+
+      messages.value.push({
+        content: areaInput.value,
+        role: "me",
+      })
     }
 
     const flushPicHandler = (e: unknown) => {
       let event = e as { base64ImageData: string };
       imgSrc.value = event.base64ImageData;
     };
+
+    const addChatMessage = (e: unknown) =>{
+      let event = e as {role: string, content: string};
+      messages.value.push({
+        content: event.content,
+        role: event.role,
+      })
+    }
 
     const handleEnter = (event: KeyboardEvent) => {
       // 处理 Enter 键按下事件
@@ -135,11 +144,7 @@ export default {
 
     onMounted(() => {
       emitter.on('flush_pic', flushPicHandler);
-
-      messages.value.push({
-        content: "111",
-        sender: "me",
-      })
+      emitter.on('message', addChatMessage);
     });
 
     onUnmounted(() => {

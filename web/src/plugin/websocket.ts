@@ -20,9 +20,14 @@ export const useWebSocket = () => {
             const resp = JSON.parse(event.data);
             const id = resp.id;
 
-            if(id === 1){
-                // console.log(resp.data);
+            if (id === 0){  // chatbox消息
+                console.log(resp)
+            }
+            else if(id === 1){
                 emitter.emit('flush_pic', {'base64ImageData': resp.data});
+                if(resp.content !== undefined){
+                    emitter.emit('message', {'role': "system", 'content': resp.content});
+                }
             }
 
         }

@@ -12,6 +12,7 @@ from .experiment.flow.vtk_helper import generate_streamline, make_snapshot, nc2v
 from .gpt.prompts import prompts, index2key
 from .gpt.access import chat
 from .experiment.flow.glo_var import gInfo, streamline_base_dir, vtk_base_dir, nc_base_dir, pics_base_dir
+from server import connection
 
 
 def dispatch(text):
@@ -38,7 +39,8 @@ def handle_message(text):
             # 制作消息
             data = {
                 "id": 1,
-                "data": base64ImageData
+                "data": base64ImageData,
+                "content": "流线已生成"
             }
         if process_id == 3:  # 询问数据集
             status, info = process_dataset(process_id, text)
@@ -47,7 +49,6 @@ def handle_message(text):
                 "data": info,
                 "status": status
             }
-
         return data
     except Exception as e:
         print(e)
@@ -113,8 +114,8 @@ def process_seed(process_id, text):
             # 生成图片
             pic_path = os.path.abspath(os.path.join(pics_base_dir, gInfo.pics_name))
 
-            make_snapshot(file_name=os.path.join(streamline_base_dir, gInfo.streamline_file_name), width=2*gInfo.xdim,
-                          height=2*gInfo.ydim, output=pic_path)
+            make_snapshot(file_name=os.path.join(streamline_base_dir, gInfo.streamline_file_name), width=2 * gInfo.xdim,
+                          height=2 * gInfo.ydim, output=pic_path)
 
             with open(pic_path, 'rb') as f:
                 image_data = f.read()

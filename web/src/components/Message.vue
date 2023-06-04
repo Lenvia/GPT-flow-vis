@@ -1,7 +1,7 @@
 <template>
-  <div class="message" :class="`message-${sender}`">
+  <div class="message" :class="`message-${role}`">
     <div class="message-content">{{ content }}</div>
-    <div class="message-sender">{{ sender }}</div>
+    <div class="message-role">{{ role }}</div>
   </div>
 </template>
 
@@ -15,7 +15,7 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    sender: {
+    role: {
       type: String,
       required: true,
     },
@@ -33,7 +33,7 @@ export default defineComponent({
 .message-content {
   font-size: 14px;
 }
-.message-sender {
+.message-role {
   font-size: 10px;
   color: gray;
 }
