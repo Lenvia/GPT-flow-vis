@@ -43,13 +43,13 @@ def uploadNC(request):
         data = {'data': gInfo.dataset_info}
         response = JsonResponse(data)
 
-        # consumer = connection.active_consumer
-        # if consumer:
-        #     async_to_sync(consumer.send(text_data=json.dumps({
-        #         "id": 0,
-        #         "content": "数据集已加载",
-        #     })))
-        #     print("已发送")
+        # 响应信息
+        consumer = connection.active_consumer
+        if consumer:
+            async_to_sync(consumer.send)(text_data=json.dumps({
+                "id": 0,
+                "content": "数据集已加载",
+            }))
 
         return response
 

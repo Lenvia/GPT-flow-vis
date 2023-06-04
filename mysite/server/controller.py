@@ -42,12 +42,16 @@ def handle_message(text):
                 "data": base64ImageData,
                 "content": "流线已生成"
             }
-        if process_id == 3:  # 询问数据集
+        elif process_id == 3:  # 询问数据集
             status, info = process_dataset(process_id, text)
             data = {
                 "id": 3,
                 "data": info,
                 "status": status
+            }
+        else:
+            data = {
+                "id": -1
             }
         return data
     except Exception as e:
