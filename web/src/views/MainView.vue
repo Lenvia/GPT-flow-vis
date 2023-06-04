@@ -1,11 +1,11 @@
 <template>
   <div style="background-color: blueviolet; height: 98vh; width: 98vw">
     <el-row class="full-size flex_row bg-color-beige">
-      <el-col class="full-height flex_column" :span="16" style="background-color: aliceblue; ">
+      <el-col class="full-height flex_column" :span="14" style="background-color: aliceblue; ">
         <ChatView></ChatView>
       </el-col>
 
-      <el-col class="full-height  flex_column" :span="4">
+      <el-col class="full-height  flex_column" :span="6">
         <!--        <div class="grid-content ep-bg-purple-light"/>-->
         <div class="full-size bg-color-cadetblue">111</div>
       </el-col>

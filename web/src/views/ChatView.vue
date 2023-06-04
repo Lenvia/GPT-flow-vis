@@ -31,23 +31,30 @@
       </el-row>
 
       <el-row class="full-width flex_row" style="height: 80%">
-        <el-col class="full-height" :span="12">
+        <el-col class="full-height" :span="14">
           <div class="full-size" style="background-color: black;">
-            <img :src="`data:image/png;base64,${imgSrc}`" :style="{ width: '100%', height: '60%' }" alt="streamline" />
+            <img :src="`data:image/png;base64,${imgSrc}`" :style="{ width: '100%', height: '60%' }" alt="streamline"/>
 
             <el-input
                 type="textarea"
-                :rows="14"
+                :rows="13"
                 v-model="dataset_info"
                 readonly
-            style="height:38%; overflow-y: auto;"></el-input>
+                style="height:38%; overflow-y: auto;"></el-input>
           </div>
 
 
         </el-col>
 
-        <el-col class="full-height" :span="12">
-          <div class="full-size bg-color-aliceblue">456</div>
+        <el-col class="full-height" :span="10">
+          <div class="full-size bg-color-aliceblue">
+            <el-card class="chat-box">
+              <div class="messages">
+                <Message v-for="(message, index) in messages" :key="index" :content="message.content"
+                         :sender="message.sender"/>
+              </div>
+            </el-card>
+          </div>
         </el-col>
       </el-row>
     </el-row>
@@ -56,20 +63,29 @@
 </template>
 
 <script lang="ts">
-import {ElInput, ElCol, ElRow, ElButton, ElUpload, ElIcon} from 'element-plus'
+import {ElInput, ElCol, ElRow, ElCard, ElButton, ElUpload, ElIcon} from 'element-plus'
 import {Upload} from '@element-plus/icons-vue'
 
 import {ref, onMounted, getCurrentInstance, onUnmounted} from 'vue'
 import {useWebSocket} from "@/plugin/websocket";
 import http from '@/plugin/request';
 import emitter from "@/bus";
+import Message from '@/components/Message.vue';
 
 const areaInput = ref('')
 const fileName = ref('');
+const messages = ref([
+  {content: '欢迎加入', sender: 'system'},
+  {content: '欢迎加入', sender: 'system'},
+  {content: '欢迎加入', sender: 'system'},
+  {content: '欢迎加入', sender: 'system'},
+  {content: '欢迎加入', sender: 'system'},
+]);
+
 
 export default {
   name: "ChatView",
-  components: {ElInput, ElCol, ElRow, ElButton, ElUpload, Upload, ElIcon},
+  components: {ElInput, ElCol, ElRow, ElCard, ElButton, ElUpload, Upload, ElIcon, Message},
 
   created() {
     const instance = getCurrentInstance();
@@ -119,6 +135,11 @@ export default {
 
     onMounted(() => {
       emitter.on('flush_pic', flushPicHandler);
+
+      messages.value.push({
+        content: "111",
+        sender: "me",
+      })
     });
 
     onUnmounted(() => {
@@ -133,6 +154,7 @@ export default {
       handleChange,
       imgSrc,
       dataset_info,
+      messages,
     }
   }
 }
@@ -143,5 +165,11 @@ export default {
 .upload-demo {
   display: inline-block;
   margin-right: 10px;
+}
+
+.chat-box {
+  width: 100%;
+  height: 50%;
+  overflow-y: auto;
 }
 </style>
