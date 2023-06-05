@@ -7,6 +7,11 @@ import store from './store'
 import 'element-plus/dist/index.css'
 // import {zhCn} from "element-plus/es/locale";
 
+// Import Bootstrap and BootstrapVue CSS files (order is important)
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap-vue/dist/bootstrap-vue.css";
+
+
 createApp(App)
     .use(store)
     .use(router)

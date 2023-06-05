@@ -2,7 +2,7 @@
   <div class="full-size">
     <el-row class="full-size flex_column">
       <el-row class="full-width bg-color-aquamarine content_center" style="height: 20%">
-        <div style="height: 40%; width: 60%; display: flex">
+        <div class="area-container">
           <el-input v-model="areaInput"
                     clearable
                     :rows="4"
@@ -11,7 +11,7 @@
                     @keydown.enter.prevent="handleEnter"
           />
           <el-upload
-              class="upload-demo"
+              class="upload-button"
               :action="''"
               :limit="1"
               :auto-upload="false"
@@ -25,22 +25,23 @@
             </el-button>
           </el-upload>
 
-
-          <el-button type="primary" round @click="submit">Submit</el-button>
+          <el-button class="submit-button" type="primary" round @click="submit">Submit</el-button>
         </div>
       </el-row>
 
       <el-row class="full-width flex_row" style="height: 80%">
         <el-col class="full-height" :span="14">
-          <div class="full-size" style="background-color: black;">
-            <img :src="`data:image/png;base64,${imgSrc}`" :style="{ width: '100%', height: '60%' }" alt="streamline"/>
-
+          <div class="full-size">
+            <div style="width:100%; height: 60%;position: relative; background-color: black">
+              <img class="border border-primary" :src="`data:image/png;base64,${imgSrc}`" style="width: 100%; height: 100%; object-fit: contain; position: absolute;"
+                   alt="streamline"/>
+            </div>
             <el-input
+                :rows="14"
                 type="textarea"
-                :rows="13"
                 v-model="dataset_info"
                 readonly
-                style="height:38%; overflow-y: auto;"></el-input>
+                style="height:40%; width: 100%; overflow-y: auto;"></el-input>
           </div>
 
 
@@ -122,8 +123,8 @@ export default {
       imgSrc.value = event.base64ImageData;
     };
 
-    const addChatMessage = (e: unknown) =>{
-      let event = e as {role: string, content: string};
+    const addChatMessage = (e: unknown) => {
+      let event = e as { role: string, content: string };
       messages.value.push({
         content: event.content,
         role: event.role,
@@ -167,14 +168,33 @@ export default {
 </script>
 
 <style scoped>
-.upload-demo {
+
+.area-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 40%;
+  width: 60%;
+  padding: 10px;
+}
+
+
+.upload-button {
   display: inline-block;
   margin-right: 10px;
 }
 
+.submit-button {
+  width: 15%;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 .chat-box {
-  width: 100%;
-  height: 50%;
+  margin: 0 1% 0 1%;
+  width: 98%;
+  height: 60%;
   overflow-y: auto;
 }
+
 </style>
