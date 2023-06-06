@@ -46,7 +46,7 @@ def handle_message(text):
             status, info = process_dataset(process_id, text)
             data = {
                 "id": 3,
-                "data": info,
+                "content": info,
                 "status": status
             }
         else:

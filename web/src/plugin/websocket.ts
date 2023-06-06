@@ -29,6 +29,11 @@ export const useWebSocket = () => {
                     emitter.emit('message', {'role': "system", 'content': resp.content});
                 }
             }
+            else if(id===3){
+                if(resp.status !== undefined && resp.status === 1){
+                    emitter.emit('message', {'role': "system", 'content': resp.content});
+                }
+            }
 
         }
 

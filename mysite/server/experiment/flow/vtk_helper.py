@@ -95,7 +95,7 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir, level=0):
     # 写入vtk文件
     writer = vtkRectilinearGridWriter()
 
-    gInfo.vtk_file_name = file_name.split('.')[0] + '_' + str(level) + '.vtk'
+    gInfo.vtk_file_name = str(level) + '_' + file_name.split('.')[0] + '.vtk'  # 把层数放前面，方便时序
 
     output_path = os.path.join(vtk_base_dir, gInfo.vtk_file_name)
     writer.SetFileName(output_path)
@@ -191,6 +191,10 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     print('done!')
 
 
+def generate_pathline():
+    pass
+
+
 def make_snapshot(file_name, width, height, output):  # output 必须是绝对路径
     lib = ctypes.cdll.LoadLibrary('server/experiment/CProj/build/libstreamline.dylib')
     # 调用函数
@@ -203,7 +207,7 @@ def make_snapshot(file_name, width, height, output):  # output 必须是绝对�
 
 
 if __name__ == "__main__":
-    # nc2vtk('IWP_DAILY_20141123.nc', "../data/nc_flow_field", "../data/vtk_flow_field")
+    nc2vtk('IWP_DAILY_20141125.nc', "../data/nc_flow_field", "../data/vtk_flow_field")
     # quicklook('../data/nc_flow_field/IWP_DAILY_20141123.nc')
 
     # generate_streamline(filename="IWP_DAILY_20141123.vtk",
@@ -214,6 +218,6 @@ if __name__ == "__main__":
     #                     level=0,
     #                     number_of_points=1000)
 
-    make_snapshot(
-        "../data/streamlines/IWP_DAILY_20141123_531_1621.vtk",
-        780, 480, "/Users/yy/GithubProjects/GPT-flow-vis/mysite/server/experiment/111.png")
+    # make_snapshot(
+    #     "../data/streamlines/IWP_DAILY_20141123_531_1621.vtk",
+    #     780, 480, "/Users/yy/GithubProjects/GPT-flow-vis/mysite/server/experiment/111.png")
