@@ -6,7 +6,7 @@ import MainView from "@/views/MainView.vue";
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'main',
+    name: 'index',
     component: MainView
   },
 

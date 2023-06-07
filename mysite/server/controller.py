@@ -31,7 +31,9 @@ def dispatch(text):
 
 def handle_message(text):
     try:
-        process_id = dispatch(text)
+        # process_id = dispatch(text)
+        # just for dev
+        process_id = 1
         print("即将跳转：", process_id)
 
         if process_id == 1:  # 撒点

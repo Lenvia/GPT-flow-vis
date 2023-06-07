@@ -33,15 +33,18 @@ def uploadNC(request):
         # 解析JSON数据为Python字典
         json_data = json.loads(data)
         # 获取文件名
-        file_name = json_data.get('file_name')
-        gInfo.file_name = file_name
+        file_name_list = json_data.get('file_name_list')
 
-        print("select: ", gInfo.file_name)
-
-        quicklook(os.path.join(nc_base_dir, gInfo.file_name))
-
-        data = {'data': gInfo.dataset_info}
-        response = JsonResponse(data)
+        if len(file_name_list) == 1:  # 单时间流线
+            gInfo.file_name = file_name_list[0]
+            print("select: ", gInfo.file_name)
+            quicklook(os.path.join(nc_base_dir, gInfo.file_name))
+            data = {'data': gInfo.dataset_info}
+            response = JsonResponse(data)
+        else:  # 轨迹线
+            print(file_name_list)
+            data = {'data': ""}
+            response = JsonResponse(data)
 
         # 响应信息
         consumer = connection.active_consumer

@@ -13,7 +13,7 @@
           <el-upload
               class="upload-button"
               :action="''"
-              :limit="1"
+              multiple
               :auto-upload="false"
               :show-file-list="false"
               :on-change="handleChange"
@@ -25,7 +25,9 @@
             </el-button>
           </el-upload>
 
-          <el-button class="submit-button" type="primary" round @click="submit">Submit</el-button>
+          <el-button class="primary-button" type="primary" round @click="upload">Upload</el-button>
+          <el-button class="primary-button" type="primary" round @click="submit">Submit</el-button>
+          <el-button class="primary-button" type="primary" round @click="reset">Reset</el-button>
         </div>
       </el-row>
 
@@ -64,20 +66,15 @@
 </template>
 
 <script lang="ts">
-import {ElInput, ElCol, ElRow, ElCard, ElButton, ElUpload, ElIcon} from 'element-plus'
+import {ElInput, ElCol, ElRow, ElCard, ElButton, ElUpload, ElIcon, ElMessage} from 'element-plus'
 import {Upload} from '@element-plus/icons-vue'
 
-import {ref, onMounted, getCurrentInstance, onUnmounted} from 'vue'
+import {ref, onMounted, getCurrentInstance, onUnmounted, Ref} from 'vue'
 import {useWebSocket} from "@/plugin/websocket";
 import http from '@/plugin/request';
 import emitter from "@/bus";
 import Message from '@/components/Message.vue';
 
-const areaInput = ref('')
-const fileName = ref('');
-const messages = ref([
-  {content: '欢迎加入', role: 'system'},
-]);
 
 
 export default {
@@ -90,23 +87,39 @@ export default {
   },
 
   setup() {
-
-    const dataset_info = ref('')
-
     const {ws} = useWebSocket()
 
+    const dataset_info = ref('')
     const imgSrc = ref('');
+    const areaInput = ref('')
+    const fileNameList: Ref<string[]> = ref([]);
+    const messages = ref([
+      {content: '欢迎加入', role: 'system'},
+    ]);
 
-    const handleChange = async (file: File) => {
-      fileName.value = file.name;
+    const handleChange = (file: File, fileList: File[]) => {
+      fileNameList.value = fileList.map(fileItem => fileItem.name);
+    };
+
+    const upload = async () =>{
+      if(fileNameList.value.length === 0){
+        ElMessage({
+          showClose: false,
+          message: '还未选择文件！',
+          type: 'error',
+        })
+        return
+      }
+
+      console.log(fileNameList.value)
       const response = await http.post('/upload/', {
-        "file_name": fileName.value,
+        "file_name_list": fileNameList.value,
       }, {
         timeout: 20000
       })
 
       dataset_info.value = response.data
-    };
+    }
 
     function submit() {
       console.log("发送消息： ", areaInput.value)
@@ -116,6 +129,14 @@ export default {
         content: areaInput.value,
         role: "me",
       })
+    }
+
+    function reset(){
+      dataset_info.value = ""
+      imgSrc.value = ""
+      areaInput.value = ""
+      fileNameList.value = []
+      messages.value = [messages.value[0]]
     }
 
     const flushPicHandler = (e: unknown) => {
@@ -156,11 +177,13 @@ export default {
       areaInput,
       submit,
       handleEnter,
-      fileName,
+      fileNameList,
       handleChange,
       imgSrc,
       dataset_info,
       messages,
+      reset,
+      upload,
     }
   }
 }
@@ -184,7 +207,7 @@ export default {
   margin-right: 10px;
 }
 
-.submit-button {
+.primary-button {
   width: 15%;
   margin-left: 5px;
   margin-right: 5px;
