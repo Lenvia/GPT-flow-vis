@@ -18,7 +18,7 @@ from vtkmodules.util.vtkConstants import VTK_FLOAT, VTK_INT
 from vtkmodules.vtkCommonDataModel import vtkRectilinearGrid
 from vtkmodules.vtkIOLegacy import vtkRectilinearGridWriter
 
-from .glo_var import gInfo
+from glo_var import gInfo
 
 
 def quicklook(input_path):
@@ -207,7 +207,9 @@ def make_snapshot(file_name, width, height, output):  # output 必须是绝对�
 
 
 if __name__ == "__main__":
-    nc2vtk('IWP_DAILY_20141125.nc', "../data/nc_flow_field", "../data/vtk_flow_field")
+    pass
+    # for i in range(26, 32):
+    #     nc2vtk('IWP_DAILY_201412'+str(i)+'.nc', "../data/nc_flow_field", "../data/vtk_flow_field")
     # quicklook('../data/nc_flow_field/IWP_DAILY_20141123.nc')
 
     # generate_streamline(filename="IWP_DAILY_20141123.vtk",
