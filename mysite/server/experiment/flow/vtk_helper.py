@@ -106,23 +106,17 @@ def nc2vtk(file_name, nc_base_dir, vtk_base_dir, level=0):
 
 
 def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None, yrange=None, level=0,
-                        number_of_points=1000):
+                        number_of_points=1000, max_steps=2000, init_len=0.1):
     reader = vtkRectilinearGridReader()
 
     print("--------check--------", vtk_base_dir, filename)
     reader.SetFileName(os.path.join(vtk_base_dir, filename))
     reader.Update()
 
-    # 获取速度向量
-    # vectors = reader.GetOutput().GetPointData().GetVectors()
-
     # 设置撒点区域
     xmin, xmax = xrange
     ymin, ymax = yrange
-    # zmin, zmax = zrange
     nseeds = number_of_points
-
-    # print(xrange, yrange)
 
     # 随机生成种子点
     seeds = vtkPoints()
@@ -132,7 +126,6 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
         # seed_z = random.uniform(zmin, zmax)
         seed_z = level
         seeds.InsertNextPoint((seed_x, seed_y, seed_z))
-        # print(seed_x, seed_y, seed_z)
     source = vtkPolyData()
     source.SetPoints(seeds)
 
@@ -140,20 +133,13 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     streamer = vtkStreamTracer()
     streamer.SetInputConnection(reader.GetOutputPort())
     streamer.SetSourceData(source)
-    streamer.SetMaximumPropagation(200.0)
-    streamer.SetInitialIntegrationStep(0.1)
+    streamer.SetInitialIntegrationStep(init_len)
     streamer.SetIntegratorTypeToRungeKutta45()
     streamer.SetIntegrationDirectionToBoth()
     # streamer.SetComputeVorticity(True)
-    streamer.SetMaximumNumberOfSteps(2000)
+    streamer.SetMaximumNumberOfSteps(max_steps)
     streamer.Update()  # 必须更新！！！！
     streamer_output = streamer.GetOutput()
-
-    # streamer.SetComputeStreamFunction(True)
-    # streamer.SetIntegrationStepUnitToCellLengthUnit()
-    # streamer.SetInterpolatorTypeToCellLocator()
-    # streamer.SetInterpolatorTypeToDataSetPointLocator()
-    # streamer.SetInterpolatorTypeToKochanekSpline()
 
     # 由于流线不具有边界，所以需要再插入4个孤立点
     isolated_point = vtkPoints()

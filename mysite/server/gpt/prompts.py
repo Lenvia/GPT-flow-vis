@@ -57,6 +57,8 @@ prompts = {
             ymax: int // 表示y轴的边界最大值，默认值-1
             level: int  // 表示层数（z坐标），默认值为0，表示表面（最上层）。最后一层用-1表示
             nseeds: int // 表示播撒种子点的个数，默认值-1
+            max_steps: int  // 最大步数，默认为2000
+            init_len: float  // 初始步长，默认为 0.1
         }
         
         你需要从我的话语中提取以上各配置项中各字段对应的内容，然后返回配置项的json格式。
@@ -67,21 +69,21 @@ prompts = {
         输入："在x范围为0到100，y范围为0到50，选择第1层，随机生成1000个种子点"。
         输出：
         <content>
-        {"seedItem":{"xmin": 0, "xmax": 100, "ymin": 0, "ymax": 50, "level": 1, "nseeds": 1000}}
+        {"seedItem":{"xmin": 0, "xmax": 100, "ymin": 0, "ymax": 50, "level": 1, "nseeds": 1000, "max_steps": 2000, "init_len": 0.1}}
         </content>
         
         示例二：
-        输入："在x范围为0到123，y从0到50，种子点设置550个"。
+        输入："在x范围为0到123，y从0到50，种子点设置550个，最大步数3000"。
         输出：
         <content>
-        {"seedItem":{"xmin": 0, "xmax": 123, "ymin": 0, "ymax": 50, "level": 0, "nseeds": 550}}
+        {"seedItem":{"xmin": 0, "xmax": 123, "ymin": 0, "ymax": 50, "level": 0, "nseeds": 550, "max_steps": 3000, "init_len": 0.1}}}
         </content>
         
         示例三：
-        输入："在最后一层里，x范围为0到100，y从0到60，种子点设置10个"。
+        输入："在最后一层里，x范围为0到100，y从0到60，种子点设置10个，初始步长为0.01"。
         输出：
         <content>
-        {"seedItem":{"xmin": 0, "xmax": 100, "ymin": 0, "ymax": 60, "level": -1, "nseeds": 10}}
+        {"seedItem":{"xmin": 0, "xmax": 100, "ymin": 0, "ymax": 60, "level": -1, "nseeds": 10, "max_steps": 2000, "init_len": 0.01}}}
         </content>
         ''',
 
