@@ -19,7 +19,41 @@
         do_pathline(file_list, 2, 1.0f, 6, seeds);
         do_pathline(file_list, 2, 1.0f, 6, seeds, 12);
  **************************************************************/
-vtkm::cont::DataSet do_pathline(std::vector<std::string> file_list,
+
+void gen_pathline(std::vector<std::string> file_list, vtkm::Id num_file, float* xrange, float *yrange, int nseeds,
+                  vtkm::Id num_step, vtkm::Float32 step_size, int inter_num, std::string out_put){
+    std::vector<vtkm::Particle> seeds;
+    gen_seeds(seeds, xrange, yrange, nseeds);
+    auto pathlineCurves = do_pathline(file_list, num_file, step_size, num_step, seeds, inter_num);
+
+    save_vtk(out_put, pathlineCurves);
+
+}
+
+
+
+void gen_seeds(std::vector<vtkm::Particle>& seeds, float* xrange, float *yrange, int nseeds){
+
+    float xmin = xrange[0];
+    float xlen = xrange[1] - xrange[0];
+    float ymin = yrange[0];
+    float ylen = yrange[1] - yrange[0];
+
+    for (vtkm::Id i = 0; i < nseeds; i++)
+    {
+        vtkm::Particle p;
+        vtkm::FloatDefault rx = (vtkm::FloatDefault)rand() / (vtkm::FloatDefault)RAND_MAX;
+        vtkm::FloatDefault ry = (vtkm::FloatDefault)rand() / (vtkm::FloatDefault)RAND_MAX;
+        p.Pos[0] = static_cast<vtkm::FloatDefault>(xmin + rx * xlen);
+        p.Pos[1] = static_cast<vtkm::FloatDefault>(ymin + ry * ylen);
+        p.Pos[2] = 0;
+        p.ID = i;
+        seeds.push_back(p);
+    }
+}
+
+
+vtkm::cont::DataSet do_pathline(std::vector<std::string>& file_list,
                                 vtkm::Id num_file, vtkm::Float32 step_size, vtkm::Id num_step,
                                 std::vector<vtkm::Particle>& seeds, int inter_num)
 {

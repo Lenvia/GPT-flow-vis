@@ -13,7 +13,11 @@
 #include <vector>
 #include <vtkm/filter/Pathline.h>
 
+void gen_pathline(std::vector<std::string> file_list, vtkm::Id num_file, float* xrange, float *yrange, int nseeds,
+                  vtkm::Id num_step, vtkm::Float32 step_size, int inter_num, std::string out_put);
 
-vtkm::cont::DataSet do_pathline(std::vector<std::string> file_list,
+void gen_seeds(std::vector<vtkm::Particle>& seeds, float* xrange, float *yrange, int nseeds);
+
+vtkm::cont::DataSet do_pathline(std::vector<std::string>& file_list,
                                 vtkm::Id num_file, vtkm::Float32 step_size, vtkm::Id num_step,
                                 std::vector<vtkm::Particle>& seeds, int inter_num);

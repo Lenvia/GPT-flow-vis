@@ -4,9 +4,11 @@ import os.path
 import random
 import io
 import datetime
+import re
 
 import xarray as xr
 import numpy as np
+
 
 from vtkmodules.vtkCommonDataModel import vtkPolyData, vtkPlane
 from vtkmodules.vtkCommonCore import vtkPoints
@@ -177,7 +179,29 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     print('done!')
 
 
-def generate_pathline():
+# 定义一个函数，用来从文件名中提取日期
+def extract_date(filename):
+    match = re.search(r'\d{8}', filename)
+    return match.group(0) if match else ''
+
+
+def generate_pathline(filename_list, vtk_base_dir, pathline_base_dir, xrange=None, yrange=None, level=0,
+                        number_of_points=1000):
+    xmin, xmax = xrange
+    ymin, ymax = yrange
+    nseeds = number_of_points
+
+    # 使用 sorted 函数进行排序，key 函数是上面定义的 extract_date 函数
+    sorted_file_list = sorted(filename_list, key=extract_date)
+    # 绝对路径
+    sorted_file_list = [os.path.abspath(os.path.join(vtk_base_dir, f)) for f in sorted_file_list]
+
+    # 根据时间戳生成文件名
+    now = datetime.datetime.now()
+    out_put = filename_list[0].split('.')[0] + "_{}{}_{}{}.vtk".format(now.month, now.day, now.hour, now.minute)
+
+
+
     pass
 
 

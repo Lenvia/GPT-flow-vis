@@ -9,7 +9,7 @@ nc_base_dir = 'server/experiment/data/nc_flow_field'
 vtk_base_dir = 'server/experiment/data/vtk_flow_field'
 streamline_base_dir = 'server/experiment/data/streamlines'
 pics_base_dir = 'server/experiment/data/pics'
-# pics_base_dir = '../web/src/assets'
+pathline_base_dir = 'server/experiment/data/pathlines'
 
 
 class Info:
