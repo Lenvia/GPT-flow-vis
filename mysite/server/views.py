@@ -11,6 +11,7 @@ from .experiment.flow.vtk_helper import quicklook
 from server import connection
 
 from .utils import get_nc_dir
+from .errors import err_msg, Errors
 
 
 def my_view(request):
@@ -39,12 +40,19 @@ def uploadNC(request):
             gInfo.file_name = file_name_list[0]
             print("select: ", gInfo.file_name)
             quicklook(get_nc_dir(gInfo.file_name))
-            data = {'data': gInfo.dataset_info}
-            response = JsonResponse(data)
+            rsp = {
+                'code': Errors.SUCCESS,
+                'data': gInfo.dataset_info
+            }
+
         else:  # 轨迹线
             print(file_name_list)
-            data = {'data': "数据已加载"}
-            response = JsonResponse(data)
+            rsp = {
+                'code': Errors.SUCCESS,
+                'data': "数据已加载"
+            }
+
+        response = JsonResponse(rsp)
 
         # 响应信息
         consumer = connection.active_consumer
@@ -56,4 +64,7 @@ def uploadNC(request):
 
         return response
 
-    return JsonResponse({'data': "Error"})
+    return JsonResponse({
+        'code': Errors.DEFAULT,
+        'data': err_msg[Errors.DEFAULT]}
+    )

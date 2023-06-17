@@ -4,16 +4,17 @@
 @time: 2023/5/25 21:47
 """
 
-index2key = {
-    0: "controller",
-    1: "seed",
-    2: "render",
-    3: "dataset_info",
-}
+
+class Instruct:
+    CONTROLLER = 0
+    SEED = 1
+    RENDER = 2
+    DATASET_INFO = 3
+
 
 prompts = {
     # 输入：用户指令 ｜ 输出：用户指令类型，跳转唯一标识符 ｜ 后续：根据标识符选择调用函数或转发给其他gpt
-    "controller":
+    Instruct.CONTROLLER:
         '''
         你是一个分类助手，你的任务是分析输入文本并将其正确分类。我们有两个预定义的类别，分别用数字1和2表示。以下是这些类别的定义：
         1：描述了一些特定的限制条件（例如形式、范围、个数等），用于指示种子点生成的流线。例如：'在x范围为0到100，y范围为0到50，在最表面，随机生成1000个种子点。'
@@ -44,7 +45,7 @@ prompts = {
         ''',
 
     # 输入：用户撒点描述 ｜输出： json 格式的配置项（例如 xyz范围、撒点数等）｜后续：调用 vtk_helper 生成流线
-    "seed":
+    Instruct.SEED:
         '''
         从现在开始，你是我的文本配置项提取助理。
         我将输入一段配置的描述，涉及一个或多个配置项的修改。你根据我规定的不同配置项选择符合条件的填充，并返回一个配置项列表。
@@ -88,10 +89,10 @@ prompts = {
         ''',
 
     # 输入：用户指定的渲染样式 ｜ 输出：json格式的配置项 ｜ 后续：调用渲染函数
-    "render": "",
+    Instruct.RENDER: "",
 
     # 输入：xr.open的到的数据集的 .info() 文本 ｜ 输出：json格式的数据集信息｜后续：返回给前端
-    "dataset_info":
+    Instruct.DATASET_INFO:
         '''
         我将用python中的 xarray 读取.nc格式的数据集。ds = xr.open_dataset(path) 来打开数据集，并使用 ds.info()来输出数据集的信息，你需要根据我发送的数据集信息，回答我的问题
         ''',
