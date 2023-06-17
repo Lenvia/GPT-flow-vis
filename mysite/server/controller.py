@@ -13,6 +13,7 @@ from .gpt.prompts import prompts, index2key
 from .gpt.access import chat
 from .experiment.flow.glo_var import gInfo, streamline_base_dir, vtk_base_dir, nc_base_dir, pics_base_dir
 from server import connection
+from .utils import *
 
 
 def dispatch(text):
@@ -90,7 +91,7 @@ def process_seed(process_id, text):
 
             # 生成流场vtk
             clip_name = gInfo.file_name.split('.')[0] + '_' + str(level) + '.vtk'
-            clip_path = os.path.join(vtk_base_dir, clip_name)
+            clip_path = get_vtk_dir(clip_name)
             if not os.path.exists(clip_path):
                 nc2vtk(gInfo.file_name, nc_base_dir, vtk_base_dir, level)
             else:  # 已经生成过切片了，那么 xdim, ydim这些信息是有的
@@ -108,7 +109,6 @@ def process_seed(process_id, text):
             ymax = int(seedItem["ymax"])
             nseeds = int(seedItem["nseeds"])
 
-            print("--------check--------")
             generate_streamline(filename=gInfo.vtk_file_name,
                                 vtk_base_dir=vtk_base_dir,
                                 streamline_base_dir=streamline_base_dir,
@@ -118,9 +118,9 @@ def process_seed(process_id, text):
                                 number_of_points=nseeds)
             print("--------check--------", pics_base_dir, gInfo.pics_name)
             # 生成图片
-            pic_path = os.path.abspath(os.path.join(pics_base_dir, gInfo.pics_name))
+            pic_path = get_abs_pics_dir(gInfo.pics_name)
 
-            make_snapshot(file_name=os.path.join(streamline_base_dir, gInfo.streamline_file_name), width=2 * gInfo.xdim,
+            make_snapshot(file_name=get_streamline_dir(gInfo.streamline_file_name), width=2 * gInfo.xdim,
                           height=2 * gInfo.ydim, output=pic_path)
 
             with open(pic_path, 'rb') as f:

@@ -1,5 +1,3 @@
-import os.path
-
 from asgiref.sync import async_to_sync
 from django.shortcuts import render
 
@@ -11,6 +9,8 @@ from django.views.decorators.csrf import csrf_exempt
 from .experiment.flow.glo_var import gInfo, nc_base_dir
 from .experiment.flow.vtk_helper import quicklook
 from server import connection
+
+from .utils import get_nc_dir
 
 
 def my_view(request):
@@ -38,12 +38,12 @@ def uploadNC(request):
         if len(file_name_list) == 1:  # 单时间流线
             gInfo.file_name = file_name_list[0]
             print("select: ", gInfo.file_name)
-            quicklook(os.path.join(nc_base_dir, gInfo.file_name))
+            quicklook(get_nc_dir(gInfo.file_name))
             data = {'data': gInfo.dataset_info}
             response = JsonResponse(data)
         else:  # 轨迹线
             print(file_name_list)
-            data = {'data': ""}
+            data = {'data': "数据已加载"}
             response = JsonResponse(data)
 
         # 响应信息
