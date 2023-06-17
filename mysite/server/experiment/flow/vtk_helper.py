@@ -20,7 +20,7 @@ from vtkmodules.util.vtkConstants import VTK_FLOAT, VTK_INT
 from vtkmodules.vtkCommonDataModel import vtkRectilinearGrid
 from vtkmodules.vtkIOLegacy import vtkRectilinearGridWriter
 
-from glo_var import gInfo
+from .glo_var import gInfo
 
 
 def quicklook(input_path):
@@ -135,13 +135,26 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     streamer = vtkStreamTracer()
     streamer.SetInputConnection(reader.GetOutputPort())
     streamer.SetSourceData(source)
-    streamer.SetInitialIntegrationStep(init_len)
+    streamer.SetMaximumPropagation(200)
+    streamer.SetInitialIntegrationStep(0.1)
     streamer.SetIntegratorTypeToRungeKutta45()
     streamer.SetIntegrationDirectionToBoth()
     # streamer.SetComputeVorticity(True)
-    streamer.SetMaximumNumberOfSteps(max_steps)
+    streamer.SetMaximumNumberOfSteps(2000)
     streamer.Update()  # 必须更新！！！！
     streamer_output = streamer.GetOutput()
+    # streamer = vtkStreamTracer()
+    # streamer.SetInputConnection(reader.GetOutputPort())
+    # streamer.SetSourceData(source)
+    # streamer.SetMaximumPropagation(200.0)
+    # streamer.SetInitialIntegrationStep(0.1)
+    # streamer.SetIntegratorTypeToRungeKutta45()
+    # streamer.SetIntegrationDirectionToBoth()
+    # # streamer.SetComputeVorticity(True)
+    # streamer.SetMaximumNumberOfSteps(2000)
+    # streamer.Update()  # 必须更新！！！！
+    # streamer_output = streamer.GetOutput()
+
 
     # 由于流线不具有边界，所以需要再插入4个孤立点
     isolated_point = vtkPoints()

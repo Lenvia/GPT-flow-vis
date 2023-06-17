@@ -3,6 +3,10 @@ import emitter from '../bus'
 
 const wsUrl = 'ws://localhost:9900/ws/'
 
+function sendSystemMessage(content: any){
+    emitter.emit('message', {'role': "system", 'content': content});
+}
+
 // 定义一个 WebSocket 的 Vue Composition API
 export const useWebSocket = () => {
     const ws = ref<WebSocket | null>(null)
@@ -18,21 +22,25 @@ export const useWebSocket = () => {
             console.log('接收到 WebSocket 消息.')
 
             const resp = JSON.parse(event.data);
+            const code = resp.code;
+            const content = resp.content;
+
             const id = resp.id;
 
-            if (id === 0){  // chatbox 消息
-                emitter.emit('message', {'role': "system", 'content': resp.content});
+            if(code !== 0){  // 处理遇到错误
+                sendSystemMessage(content);
+                return
             }
-            else if(id === 1){
+
+            if (id === 0){  // 仅消息
+                sendSystemMessage(content);
+            }
+            else if(id === 1){  // 流线渲染
                 emitter.emit('flush_pic', {'base64ImageData': resp.data});
-                if(resp.content !== undefined){
-                    emitter.emit('message', {'role': "system", 'content': resp.content});
-                }
+                sendSystemMessage(content);
             }
-            else if(id===3){
-                if(resp.status !== undefined && resp.status === 1){
-                    emitter.emit('message', {'role': "system", 'content': resp.content});
-                }
+            else if(id===3){  // 数据集信息
+                sendSystemMessage(content);
             }
 
         }

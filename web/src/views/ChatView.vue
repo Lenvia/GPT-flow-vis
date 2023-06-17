@@ -119,6 +119,8 @@ export default {
       })
 
       dataset_info.value = response.data
+
+      fileNameList.value = []  // 清空已上传的文件列表
     }
 
     function submit() {

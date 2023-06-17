@@ -36,10 +36,22 @@ def uploadNC(request):
         # 获取文件名
         file_name_list = json_data.get('file_name_list')
 
+        print(file_name_list)
+
         if len(file_name_list) == 1:  # 单时间流线
             gInfo.file_name = file_name_list[0]
             print("select: ", gInfo.file_name)
-            quicklook(get_nc_dir(gInfo.file_name))
+
+            try:
+                quicklook(get_nc_dir(gInfo.file_name))
+            except Exception as e:
+                print(e)
+                rsp = {
+                    'code': Errors.FILE_HANDLE,
+                    'data': err_msg[Errors.FILE_HANDLE]
+                }
+                return JsonResponse(rsp)
+
             rsp = {
                 'code': Errors.SUCCESS,
                 'data': gInfo.dataset_info
@@ -49,7 +61,7 @@ def uploadNC(request):
             print(file_name_list)
             rsp = {
                 'code': Errors.SUCCESS,
-                'data': "数据已加载"
+                'data': "多项文件已加载"
             }
 
         response = JsonResponse(rsp)

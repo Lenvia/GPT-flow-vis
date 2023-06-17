@@ -140,3 +140,4 @@ tmp
 *.nc
 *.vtk
 **/build
+*.png
