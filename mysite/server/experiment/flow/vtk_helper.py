@@ -9,7 +9,6 @@ import re
 import xarray as xr
 import numpy as np
 
-
 from vtkmodules.vtkCommonDataModel import vtkPolyData, vtkPlane
 from vtkmodules.vtkCommonCore import vtkPoints
 from vtkmodules.vtkFiltersCore import vtkCutter, vtkAppendPolyData
@@ -155,7 +154,6 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     # streamer.Update()  # 必须更新！！！！
     # streamer_output = streamer.GetOutput()
 
-
     # 由于流线不具有边界，所以需要再插入4个孤立点
     isolated_point = vtkPoints()
     isolated_point.InsertNextPoint((0, 0, 0))
@@ -199,7 +197,7 @@ def extract_date(filename):
 
 
 def generate_pathline(filename_list, vtk_base_dir, pathline_base_dir, xrange=None, yrange=None, level=0,
-                        number_of_points=1000):
+                      number_of_points=1000):
     xmin, xmax = xrange
     ymin, ymax = yrange
     nseeds = number_of_points
@@ -212,10 +210,32 @@ def generate_pathline(filename_list, vtk_base_dir, pathline_base_dir, xrange=Non
     # 根据时间戳生成文件名
     now = datetime.datetime.now()
     out_put = filename_list[0].split('.')[0] + "_{}{}_{}{}.vtk".format(now.month, now.day, now.hour, now.minute)
+    out_put = os.path.join(pathline_base_dir, out_put)
 
+    # 调用C++库
+    lib = ctypes.cdll.LoadLibrary('server/experiment/CProj/build/libpathline.dylib')
+    gen_pathline = lib.gen_pathline
 
+    gen_pathline.argtypes = [ctypes.POINTER(ctypes.c_char_p), ctypes.c_long, ctypes.POINTER(ctypes.c_float),
+                             ctypes.POINTER(ctypes.c_float), ctypes.c_int, ctypes.c_long, ctypes.c_float,
+                             ctypes.c_int, ctypes.c_char_p]
+    gen_pathline.restype = None
 
-    pass
+    num_file = len(sorted_file_list)
+    array_type = ctypes.c_char_p * num_file
+
+    file_list = array_type(*[str.encode(i) for i in sorted_file_list])
+
+    xrange = (ctypes.c_float * 2)(xmin, xmax)
+    yrange = (ctypes.c_float * 2)(ymin, ymax)
+
+    # TODO 日后改成可配置
+    num_step = 2000
+    step_size = 0.5
+    inter_num = 2
+
+    gen_pathline(file_list, num_file, xrange, yrange, nseeds, num_step, step_size, inter_num, out_put.encode('utf-8'))
+    print("pathline generated.")
 
 
 def make_snapshot(file_name, width, height, output):  # output 必须是绝对路径
@@ -246,3 +266,19 @@ if __name__ == "__main__":
     # make_snapshot(
     #     "../data/streamlines/IWP_DAILY_20141123_531_1621.vtk",
     #     780, 480, "/Users/yy/GithubProjects/GPT-flow-vis/mysite/server/experiment/111.png")
+
+
+    # generate_pathline(
+    #     filename_list=[
+    #         "0_IWP_DAILY_20141226.vtk",
+    #         "0_IWP_DAILY_20141227.vtk",
+    #         "0_IWP_DAILY_20141228.vtk",
+    #         "0_IWP_DAILY_20141229.vtk",
+    #         "0_IWP_DAILY_20141230.vtk",
+    #     ],
+    #     vtk_base_dir="../data/vtk_flow_field",
+    #     pathline_base_dir="../data/pathlines",
+    #     xrange=[0, 780],
+    #     yrange=[0, 480],
+    #     number_of_points=1000,
+    # )
