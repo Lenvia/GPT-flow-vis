@@ -16,18 +16,21 @@
                seeds 种子点
                inter_num 每个文件重复读的次数，默认为1，即每一个数据集读1次
  *  @Sample usage:
-        do_pathline(file_list, 2, 1.0f, 6, seeds);
-        do_pathline(file_list, 2, 1.0f, 6, seeds, 12);
+        gen_pathline(file_list, count, xrange, yrange, 3000, 2000, 0.5, 2, "pathline.vtk")
  **************************************************************/
 
-void gen_pathline(std::vector<std::string> file_list, vtkm::Id num_file, float* xrange, float *yrange, int nseeds,
-                  vtkm::Id num_step, vtkm::Float32 step_size, int inter_num, std::string out_put){
+
+extern "C" {
+void gen_pathline(char** file_list, vtkm::Id num_file, float* xrange, float *yrange, int nseeds,
+                  vtkm::Id num_step, vtkm::Float32 step_size, int inter_num, const char* out_put){
+    std::vector<std::string> vec(file_list, file_list + num_file);
+
     std::vector<vtkm::Particle> seeds;
     gen_seeds(seeds, xrange, yrange, nseeds);
-    auto pathlineCurves = do_pathline(file_list, num_file, step_size, num_step, seeds, inter_num);
+    auto pathlineCurves = do_pathline(vec, num_file, step_size, num_step, seeds, inter_num);
 
     save_vtk(out_put, pathlineCurves);
-
+}
 }
 
 

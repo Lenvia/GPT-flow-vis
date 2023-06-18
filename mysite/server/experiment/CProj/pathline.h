@@ -12,9 +12,11 @@
 #include <iostream>
 #include <vector>
 #include <vtkm/filter/Pathline.h>
+#include <cstring>  // for std::strcpy
+#include <string>
 
-void gen_pathline(std::vector<std::string> file_list, vtkm::Id num_file, float* xrange, float *yrange, int nseeds,
-                  vtkm::Id num_step, vtkm::Float32 step_size, int inter_num, std::string out_put);
+extern "C" void gen_pathline(char** file_list, vtkm::Id num_file, float* xrange, float *yrange, int nseeds,
+                             vtkm::Id num_step, vtkm::Float32 step_size, int inter_num, const char* out_put);
 
 void gen_seeds(std::vector<vtkm::Particle>& seeds, float* xrange, float *yrange, int nseeds);
 

@@ -219,7 +219,7 @@ def generate_pathline(filename_list, vtk_base_dir, pathline_base_dir, xrange=Non
 
 
 def make_snapshot(file_name, width, height, output):  # output 必须是绝对路径
-    lib = ctypes.cdll.LoadLibrary('server/experiment/CProj/build/libstreamline.dylib')
+    lib = ctypes.cdll.LoadLibrary('server/experiment/CProj/build/librender.dylib')
     # 调用函数
     gen = lib.gen
     gen.restype = None
