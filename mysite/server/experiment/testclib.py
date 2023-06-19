@@ -28,7 +28,7 @@ def test_render():
 
 
 def generate_pathline(filename_list, vtk_base_dir, pathline_base_dir, xrange=None, yrange=None, level=0,
-                      number_of_points=1000):
+                      number_of_points=1000, num_step=2000, step_size=0.5, inter_num=2):
     xmin, xmax = xrange
     ymin, ymax = yrange
     nseeds = number_of_points
@@ -59,11 +59,6 @@ def generate_pathline(filename_list, vtk_base_dir, pathline_base_dir, xrange=Non
 
     xrange = (ctypes.c_float * 2)(xmin, xmax)
     yrange = (ctypes.c_float * 2)(ymin, ymax)
-
-    # TODO 日后改成可配置
-    num_step = 2000
-    step_size = 0.5
-    inter_num = 2
 
     gen_pathline(file_list, num_file, xrange, yrange, nseeds, num_step, step_size, inter_num, out_put.encode('utf-8'))
 
