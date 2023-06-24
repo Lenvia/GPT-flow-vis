@@ -60,5 +60,5 @@ function_name = first_response.additional_kwargs["function_call"]["name"]
 
 arguments = first_response.additional_kwargs["function_call"]["arguments"]
 
-# print(first_response.additional_kwargs)
+print(first_response.additional_kwargs)
 print(json.loads(arguments))
