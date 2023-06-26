@@ -18,6 +18,7 @@ class Info:
         self.file_name = None  # xxx.nc
         self.vtk_file_name = None  # 当前第几层的流场vtk
         self.streamline_file_name = None
+        self.pathline_file_name = None
         self.pics_name = None
         self.dataset_info = None
         self.xdim = None
@@ -25,11 +26,12 @@ class Info:
 
         self.file_name_list = []
 
-    def empty(self):
+    def reset(self):
         self.file_type = 0  # 默认流线
         self.file_name = None  # xxx.nc
         self.vtk_file_name = None  # 当前第几层的流场vtk
         self.streamline_file_name = None
+        self.pathline_file_name = None
         self.pics_name = None
         self.dataset_info = None
         self.xdim = None

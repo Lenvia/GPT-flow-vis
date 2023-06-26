@@ -142,17 +142,6 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     streamer.SetMaximumNumberOfSteps(2000)
     streamer.Update()  # 必须更新！！！！
     streamer_output = streamer.GetOutput()
-    # streamer = vtkStreamTracer()
-    # streamer.SetInputConnection(reader.GetOutputPort())
-    # streamer.SetSourceData(source)
-    # streamer.SetMaximumPropagation(200.0)
-    # streamer.SetInitialIntegrationStep(0.1)
-    # streamer.SetIntegratorTypeToRungeKutta45()
-    # streamer.SetIntegrationDirectionToBoth()
-    # # streamer.SetComputeVorticity(True)
-    # streamer.SetMaximumNumberOfSteps(2000)
-    # streamer.Update()  # 必须更新！！！！
-    # streamer_output = streamer.GetOutput()
 
     # 由于流线不具有边界，所以需要再插入4个孤立点
     isolated_point = vtkPoints()
@@ -179,12 +168,8 @@ def generate_streamline(filename, vtk_base_dir, streamline_base_dir, xrange=None
     gInfo.streamline_file_name = out_put
     gInfo.pics_name = out_put.split('.')[0] + ".png"
 
-    print("--------check--------", streamline_base_dir, out_put)
     writer.SetFileName(os.path.join(streamline_base_dir, out_put))
-
     writer.SetInputData(combined_data)
-    # writer.SetInputConnection(streamer.GetOutputPort())
-
     writer.Write()
 
     print('done!')
@@ -211,10 +196,10 @@ def generate_pathline(filename_list, vtk_base_dir, pathline_base_dir, xrange=Non
     # 根据时间戳生成文件名
     now = datetime.datetime.now()
     out_put = filename_list[0].split('.')[0] + "_{}{}_{}{}.vtk".format(now.month, now.day, now.hour, now.minute)
-    out_put = os.path.join(pathline_base_dir, out_put)
+    out_put_path = os.path.join(pathline_base_dir, out_put)
 
-    # 调用C++库
-    lib = ctypes.cdll.LoadLibrary('server/experiment/CProj/build/libpathline.dylib')
+    # 调用C++库（dev用绝对路径，后面再说）
+    lib = ctypes.cdll.LoadLibrary('/Users/yy/GithubProjects/GPT-flow-vis/mysite/server/experiment/CProj/build/libpathline.dylib')
     gen_pathline = lib.gen_pathline
 
     gen_pathline.argtypes = [ctypes.POINTER(ctypes.c_char_p), ctypes.c_long, ctypes.POINTER(ctypes.c_float),
@@ -230,12 +215,13 @@ def generate_pathline(filename_list, vtk_base_dir, pathline_base_dir, xrange=Non
     xrange = (ctypes.c_float * 2)(xmin, xmax)
     yrange = (ctypes.c_float * 2)(ymin, ymax)
 
-    gen_pathline(file_list, num_file, xrange, yrange, nseeds, num_step, step_size, inter_num, out_put.encode('utf-8'))
+    gen_pathline(file_list, num_file, xrange, yrange, nseeds, num_step, step_size, inter_num,
+                 out_put_path.encode('utf-8'))
     print("pathline generated.")
 
 
 def make_snapshot(file_name, width, height, output):  # output 必须是绝对路径
-    lib = ctypes.cdll.LoadLibrary('server/experiment/CProj/build/librender.dylib')
+    lib = ctypes.cdll.LoadLibrary('/Users/yy/GithubProjects/GPT-flow-vis/mysite/server/experiment/CProj/build/librender.dylib')
     # 调用函数
     gen = lib.gen
     gen.restype = None
@@ -251,7 +237,7 @@ if __name__ == "__main__":
     #     nc2vtk('IWP_DAILY_201412'+str(i)+'.nc', "../data/nc_flow_field", "../data/vtk_flow_field")
     # quicklook('../data/nc_flow_field/IWP_DAILY_20141123.nc')
 
-    # generate_streamline(filename="IWP_DAILY_20141123.vtk",
+    # generate_streamline(filename="0_IWP_DAILY_20141123.vtk",
     #                     vtk_base_dir="../data/vtk_flow_field",
     #                     streamline_base_dir="../data/streamlines",
     #                     xrange=[0, 780],
@@ -262,7 +248,7 @@ if __name__ == "__main__":
     # make_snapshot(
     #     "../data/streamlines/IWP_DAILY_20141123_531_1621.vtk",
     #     780, 480, "/Users/yy/GithubProjects/GPT-flow-vis/mysite/server/experiment/111.png")
-
+    #
 
     # generate_pathline(
     #     filename_list=[

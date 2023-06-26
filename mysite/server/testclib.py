@@ -10,7 +10,7 @@ import ctypes
 import os
 import datetime
 
-from mysite.server.experiment.flow.vtk_helper import extract_date
+from mysite.server.experiment.flow.vtk_helper import extract_date, make_snapshot
 
 
 def test_render():
@@ -72,8 +72,8 @@ def test_pathline():
             "0_IWP_DAILY_20141229.vtk",
             "0_IWP_DAILY_20141230.vtk",
         ],
-        vtk_base_dir="data/vtk_flow_field",
-        pathline_base_dir="data/pathlines",
+        vtk_base_dir="experiment/data/vtk_flow_field",
+        pathline_base_dir="experiment/data/pathlines",
         xrange=[0, 780],
         yrange=[0, 480],
         number_of_points=1000,
@@ -81,4 +81,9 @@ def test_pathline():
 
 
 if __name__ == '__main__':
-    test_pathline()
+    pass
+    # test_pathline()
+
+    # make_snapshot(
+    #     "/Users/yy/GithubProjects/GPT-flow-vis/mysite/server/experiment/data/pathlines/0_IWP_DAILY_20141226_618_1930.vtk",
+    #     780, 480, "/Users/yy/GithubProjects/GPT-flow-vis/mysite/server/experiment/123.png")
