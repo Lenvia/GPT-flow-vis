@@ -46,15 +46,16 @@ function_descriptions = [
                     "description": "初始步长，默认为0.1",
                 },
             },
+            "required": ["nseeds"]
         }
     }
 ]
 
-user_request = "在x范围为0到123，y从0到50，种子点设置550个，最大步数3000"
+# user_request = "在x范围为0到123，y从0到50，种子点设置550个，最大步数3000"
+user_request = "在x范围为0到123，y从0到50，最大步数3000"
 
 first_response = llm.predict_messages([HumanMessage(content=user_request)],
-                                      functions=function_descriptions
-                                      )
+                                      functions=function_descriptions)
 
 function_name = first_response.additional_kwargs["function_call"]["name"]
 
