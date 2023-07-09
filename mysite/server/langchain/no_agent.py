@@ -18,7 +18,7 @@ messages = []
 
 def function_calling(text):
     messages.append(HumanMessage(content=text))
-    tools = [GetSeedConfigTool()]
+    tools = [GetSeedConfigTool(), GetDatasetInfoTool()]
     functions = [format_tool_to_openai_function(t) for t in tools]
 
     response_message = llm.predict_messages(
@@ -27,33 +27,42 @@ def function_calling(text):
 
     if response_message.additional_kwargs.get("function_call"):
         available_functions = {
-            "seed_config_extract": printParams,
+            "seed_for_streamline": printParams,
+            "get_dataset_info": printDatasetInfo,
         }
         # 获取将调用的方法和参数
         function_name = response_message.additional_kwargs["function_call"]["name"]
         function_to_call = available_functions[function_name]
         arguments = json.loads(response_message.additional_kwargs["function_call"]["arguments"])
 
-        if function_name == "seed_config_extract":
-            if arguments.get("init_len") is None:
-                messages.append(AIMessage(content="init_len 参数缺失，请提供："))
-                supply = input("请提供 init_len：")
+        if function_name == "seed_for_streamline":
+            args = SeedConfig(**arguments)
+
+            arg_dict = vars(args)
+
+            missing_params = [arg_name for arg_name, arg_value in arg_dict.items() if arg_value is None]
+
+            if missing_params:
+                descriptions = [param_descriptions.get(param_name) for param_name in missing_params]
+                descriptions = [description for description in descriptions if description is not None]
+                message = AIMessage(content=f"缺失参数：{', '.join(descriptions)}，请提供：")
+                # message = AIMessage(content=f"{', '.join(missing_params)} 参数缺失，请提供：")
+                print(message)
+                supply = input("请提供缺失的参数：")
+                messages.append(message)
                 return function_calling(supply)
 
-            function_response = function_to_call(
-                xmin=arguments.get("xmin"),
-                xmax=arguments.get("xmax"),
-                ymax=arguments.get("ymax"),
-                ymin=arguments.get("ymin"),
-                level=arguments.get("level"),
-                nseeds=arguments.get("nseeds"),
-                max_steps=arguments.get("max_steps"),
-                init_len=arguments.get("init_len"),
-            )
+            # 执行完毕，不用继续请求chain
+            return function_to_call(args)
+
+        elif function_name == "get_dataset_info":
+            function_response = function_to_call()
         else:
             function_response = empty()
+            pass
 
         function_message = FunctionMessage(name=function_name, content=function_response)
+        print(function_message)
         messages.append(function_message)
         response_message = llm.predict_messages(
             messages=messages, functions=functions
@@ -67,5 +76,10 @@ def function_calling(text):
 
 
 if __name__ == '__main__':
-    output = function_calling("在x范围为0到123，最大步数3000")
+    # output = function_calling("撒点的x范围为0到123，最大步数3000")
+    output = function_calling(input("请输入指令："))
+
     print(output)
+    # output = function_calling("在x范围为0到123，最大步数3000")
+    # output = function_calling("数据集的信息是什么？")
+    # print(output)

@@ -7,7 +7,7 @@ llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-0613")
 
 function_descriptions = [
     {
-        'name': 'seed_config_extract', 'description': '提取有关流线撒点相关的配置项，例如区域、步长、种子点数量等',
+        'name': 'seed_for_streamline', 'description': '提取有关流线撒点相关的配置项，例如区域、步长、种子点数量等',
         'parameters': {
             'title': 'GetSeedConfigCheckInput',
             'type': 'object',
