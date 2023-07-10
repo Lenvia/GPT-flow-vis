@@ -30,14 +30,14 @@ class SeedConfig(object):
 
 
 class GetSeedConfigCheckInput(BaseModel):
-    xmin: int = Field(..., description="x的最小值，默认为-1")
-    xmax: int = Field(..., description="x的最大值，默认为-1")
-    ymin: int = Field(..., description="y的最小值，默认为-1")
-    ymax: int = Field(..., description="y的最大值，默认为-1")
+    xmin: int = Field(..., description="x的最小值，默认填入-1")
+    xmax: int = Field(..., description="x的最大值，默认填入-1")
+    ymin: int = Field(..., description="y的最小值，默认填入-1")
+    ymax: int = Field(..., description="y的最大值，默认填入-1")
     level: int = Field(..., description="层数，即z坐标。最上层为0，最下层为-1，默认值为0")
-    nseeds: int = Field(..., description="播撒的种子点的个数，默认为1000")
-    max_steps: int = Field(..., description="最大步长，默认为2000")
-    init_len: float = Field(..., description="初始步长，默认为0.1")
+    nseeds: int = Field(1000, description="播撒的种子点的个数，默认填入1000")
+    max_steps: int = Field(..., description="最大步长，默认填入2000")
+    init_len: float = Field(..., description="初始步长，默认填入0.1")
 
 
 # GetSeedConfigTool 获取撒点配置项，并后续调用撒点函数生成流线、轨迹线

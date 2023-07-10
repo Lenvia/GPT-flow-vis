@@ -5,21 +5,23 @@ from langchain.schema import (
     HumanMessage,
     FunctionMessage,
     AIMessage,
+    SystemMessage,
 )
 from langchain.tools import format_tool_to_openai_function
 
 from functions import *
 from tools import *
 
-llm = ChatOpenAI(temperature=0, model_name='gpt-3.5-turbo-0613')
+llm = ChatOpenAI(temperature=0.3, model_name='gpt-3.5-turbo-0613')
 
-messages = []
+messages = [SystemMessage(content="You are a rigorous assistant and ask you to be thoughtful in your answers.")]
 
 
 def function_calling(text):
     messages.append(HumanMessage(content=text))
     tools = [GetSeedConfigTool(), GetDatasetInfoTool()]
     functions = [format_tool_to_openai_function(t) for t in tools]
+    # print(functions)
 
     response_message = llm.predict_messages(
         messages, functions=functions
@@ -34,6 +36,7 @@ def function_calling(text):
         function_name = response_message.additional_kwargs["function_call"]["name"]
         function_to_call = available_functions[function_name]
         arguments = json.loads(response_message.additional_kwargs["function_call"]["arguments"])
+        print(arguments)
 
         if function_name == "seed_for_streamline":
             args = SeedConfig(**arguments)
@@ -43,6 +46,7 @@ def function_calling(text):
             missing_params = [arg_name for arg_name, arg_value in arg_dict.items() if arg_value is None]
 
             if missing_params:
+                # TODO 应该在这里加上进一步的推理，例如根据上下文
                 descriptions = [param_descriptions.get(param_name) for param_name in missing_params]
                 descriptions = [description for description in descriptions if description is not None]
                 message = AIMessage(content=f"缺失参数：{', '.join(descriptions)}，请提供：")
